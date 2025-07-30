@@ -23,3 +23,12 @@ passar da primeira fase, o jogador ganha uma terceira torre
   - mudar o caminho
   - mais um tipo de inimigo
   - o terceiro tipo de torre
+
+DIVISAO  PROJETO:
+
+- background, caminho dos alvos, locais para botar as tropas  ---> JP
+
+PESQUISAR LOGICA PRA MIRAR NOS ALVOS 
+
+
+<img width="664" height="419" alt="image" src="https://github.com/user-attachments/assets/bc70629c-50ea-48b5-a0bb-263d18aed400" />
