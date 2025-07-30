@@ -27,7 +27,7 @@ passar da primeira fase, o jogador ganha uma terceira torre
 primeira DIVISAO  PROJETO:
   pablo, gabi - HUD ,INTERFACE, TELA INICIAL ,tela creditos(menor prioridade) 
   
-  mapa, caminho dos alvos, lugar das tropas - CLARA ANDRE JP KAUE
+  Mapa, caminho dos alvos, lugar das tropas - CLARA ANDRE JP KAUE
 
 PESQUISAR LOGICA PRA MIRAR NOS ALVOS 
 
