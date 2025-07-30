@@ -24,7 +24,9 @@ passar da primeira fase, o jogador ganha uma terceira torre
   - mais um tipo de inimigo
   - o terceiro tipo de torre
 
-DIVISAO  PROJETO:
+primeira DIVISAO  PROJETO:
+  pablo, gabi - HUD ,INTERFACE, TELA INICIAL ,tela creditos(menor prioridade) 
+  mapa, caminho dos alvos, lugar das tropas - CLARA ANDRE JP KAUE
 
 PESQUISAR LOGICA PRA MIRAR NOS ALVOS 
 
