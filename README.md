@@ -25,7 +25,7 @@ passar da primeira fase, o jogador ganha uma terceira torre
   - o terceiro tipo de torre
 
 primeira DIVISAO  PROJETO:
-  PABLO, GABI - HUD ,INTERFACE, TELA INICIAL ,tela creditos(menor prioridade) 
+  PABLO, GABI - HUD ,INTERFACE, {TELA INICIAL ,tela creditos(menor prioridade)} 
   
   Mapa, caminho dos alvos, lugar das tropas - CLARA ANDRE JP KAUE
 
