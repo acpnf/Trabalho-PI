@@ -26,8 +26,6 @@ passar da primeira fase, o jogador ganha uma terceira torre
 
 DIVISAO  PROJETO:
 
-- background, caminho dos alvos, locais para botar as tropas  ---> JP
-
 PESQUISAR LOGICA PRA MIRAR NOS ALVOS 
 
 
