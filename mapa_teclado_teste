@@ -1,0 +1,156 @@
+#include "raylib.h"
+#include <stdio.h>
+
+#define TILE_SIZE 64
+#define LINHAS_MAPA 10
+#define COLUNAS_MAPA 20
+
+// Custos das cores
+#define CUSTO_ROSA 1
+#define CUSTO_PRETO 3
+#define CUSTO_LARANJA 5
+
+typedef enum {
+    COR_ROSA = 0,
+    COR_PRETO,
+    COR_LARANJA,
+    COR_TOTAL
+} Cor;
+
+int main(void)
+{
+    const int largura = TILE_SIZE * COLUNAS_MAPA;
+    const int altura = TILE_SIZE * LINHAS_MAPA;
+
+    InitWindow(largura, altura, "jogo");
+    SetTargetFPS(60);
+
+    Texture2D grama_textura = LoadTexture("grama.png");
+    Texture2D caminho_textura = LoadTexture("caminho.png");
+
+    int mapa[LINHAS_MAPA][COLUNAS_MAPA] = {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}
+    };
+
+    int jogadorX = 0;
+    int jogadorY = 9;
+
+    int moedas = 10;
+    Cor cor_selecionada = COR_ROSA;
+
+    // Cores visuais do menu
+    Color cores_menu[COR_TOTAL] = {
+        (Color){255, 105, 180, 255},  // Rosa
+        (Color){0, 0, 0, 255},        // Preto
+        (Color){255, 165, 0, 255}     // Laranja
+    };
+
+    int custos[COR_TOTAL] = {CUSTO_ROSA, CUSTO_PRETO, CUSTO_LARANJA};
+
+    while (!WindowShouldClose())
+    {
+        // Movimentação do jogador
+        if (IsKeyPressed(KEY_RIGHT) && jogadorX < COLUNAS_MAPA - 1) jogadorX++;
+        if (IsKeyPressed(KEY_LEFT) && jogadorX > 0) jogadorX--;
+        if (IsKeyPressed(KEY_DOWN) && jogadorY < LINHAS_MAPA - 1) jogadorY++;
+        if (IsKeyPressed(KEY_UP) && jogadorY > 0) jogadorY--;
+
+        // Navegar no menu com teclas 1, 2 e 3
+        if (IsKeyPressed(KEY_ONE)) cor_selecionada = COR_ROSA;
+        if (IsKeyPressed(KEY_TWO)) cor_selecionada = COR_PRETO;
+        if (IsKeyPressed(KEY_THREE)) cor_selecionada = COR_LARANJA;
+
+        // Colocar objeto ao apertar 'E' se posição for válida e tiver moedas suficientes
+        if (IsKeyPressed(KEY_E))
+        {
+            int custo = custos[cor_selecionada];
+            if (mapa[jogadorY][jogadorX] == 0 && moedas >= custo)
+            {
+                mapa[jogadorY][jogadorX] = 2 + cor_selecionada;  // Marca objeto com valor diferente para cada cor (2,3,4)
+                moedas -= custo;
+            }
+        }
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // Desenho do mapa
+        for (int y = 0; y < LINHAS_MAPA; y++)
+        {
+            for (int x = 0; x < COLUNAS_MAPA; x++)
+            {
+                if (mapa[y][x] == 1)
+                {
+                    DrawTextureRec(caminho_textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, (Vector2){x * TILE_SIZE, y * TILE_SIZE}, WHITE);
+                }
+                else
+                {
+                    DrawTextureRec(grama_textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, (Vector2){x * TILE_SIZE, y * TILE_SIZE}, WHITE);
+                }
+
+                if (mapa[y][x] >= 2)
+                {
+                    int idx_cor = mapa[y][x] - 2;
+                    DrawRectangle(x * TILE_SIZE + 16, y * TILE_SIZE + 16, TILE_SIZE - 32, TILE_SIZE - 32, cores_menu[idx_cor]);
+                }
+            }
+        }
+
+        // Desenha seleção do jogador
+        Color azul_translu = (Color){0, 0, 255, 100};
+        Color vermelho_translu = (Color){255, 0, 0, 100};
+        bool invalido = (mapa[jogadorY][jogadorX] == 1 || mapa[jogadorY][jogadorX] >= 2);
+        Color cor_jogador = invalido ? vermelho_translu : azul_translu;
+        DrawRectangle(jogadorX * TILE_SIZE, jogadorY * TILE_SIZE, TILE_SIZE, TILE_SIZE, cor_jogador);
+
+        // Desenho do menu no canto direito (com um fundo escuro)
+        int menu_x = largura - 160;
+        int menu_y = 20;
+        int menu_width = 160;
+        int menu_height = 160;
+        DrawRectangle(menu_x, menu_y, menu_width, menu_height, (Color){50, 50, 50, 200});
+        DrawText("Menu de cores:", menu_x + 10, menu_y + 10, 20, RAYWHITE);
+
+        // Desenha as cores com indicação se disponível ou não
+        for (int i = 0; i < COR_TOTAL; i++)
+        {
+            Color cor_atual = cores_menu[i];
+
+            // Se não tem moedas suficientes, deixa fumê (escurece)
+            if (moedas < custos[i])
+                cor_atual = (Color){ cor_atual.r / 3, cor_atual.g / 3, cor_atual.b / 3, cor_atual.a };
+
+            int cor_pos_y = menu_y + 40 + i * 30;
+            DrawRectangle(menu_x + 20, cor_pos_y, 20, 20, cor_atual);
+            DrawText(
+                (i == COR_ROSA) ? "Rosa" :
+                (i == COR_PRETO) ? "Preto" :
+                "Laranja",
+                menu_x + 50, cor_pos_y, 20, RAYWHITE
+            );
+
+            // Indica qual está selecionado com um retângulo amarelo
+            if (cor_selecionada == i)
+                DrawRectangleLines(menu_x + 18, cor_pos_y - 2, 24, 24, YELLOW);
+        }
+
+        // Desenha moedas
+        char buffer[30];
+        snprintf(buffer, sizeof(buffer), "Moedas: %d", moedas);
+        DrawText(buffer, menu_x + 10, menu_y + menu_height - 30, 25, GOLD);
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+    return 0;
+}
