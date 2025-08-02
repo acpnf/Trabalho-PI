@@ -1,10 +1,10 @@
-Menu Inicial do Jogo — CINDEFENDA
+🎮 Menu Inicial do Jogo — CINDEFENDA
 
 Este diretório contém a implementação do menu principal do jogo CINDEFENDA, utilizando a biblioteca raylib em C.
-    
-🎮 Funcionalidades:
 
-    Tela de menu principal com botões:
+🚀 Funcionalidades:
+
+    Tela de Menu Principal com botões:
 
         Iniciar (sem funcionalidade por enquanto)
 
@@ -12,19 +12,19 @@ Este diretório contém a implementação do menu principal do jogo CINDEFENDA, 
 
         Ícone de configurações no canto superior direito
 
-    Tela de configurações com:
+    Tela de Configurações com:
 
-        Controle de áudio (Som ON/OFF)
+        Controle de áudio: Som ON/OFF
 
-        Alternância entre janela e tela cheia
+        Alternância entre Janela e Tela Cheia
 
         Botão Voltar para retornar ao menu principal
 
-    Música de fundo (formato .wav) com controle de play/pause
+    Música de fundo (.wav) com controle de play/pause
 
     Imagens integradas:
 
-        menu.png: plano de fundo
+        menu.png: plano de fundo do menu
 
         configuracao.png: ícone de engrenagem
 
@@ -32,7 +32,7 @@ Este diretório contém a implementação do menu principal do jogo CINDEFENDA, 
 
 🎵 Áudio:
 
-A música de fundo está localizada em /menu/Som/menu.wav e é gerenciada através das funções:
+A música de fundo é carregada e controlada com as seguintes funções da raylib:
 
 InitAudioDevice();
 LoadMusicStream(...);
@@ -40,22 +40,42 @@ PlayMusicStream(...);
 UpdateMusicStream(...); // chamada a cada frame
 StopMusicStream(...);
 
-A música continua tocando enquanto o jogador estiver navegando pelo menu, e pode ser pausada nas configurações.
+Ela é reproduzida enquanto o jogador está no menu e pode ser pausada na tela de configurações.
+🔗 Download da Música
+
+📥 [Clique aqui para baixar menu.wav](https://drive.google.com/file/d/1scDXe8QO2OyK7HfCazi9OsHwiswq7XoO/view?usp=sharing)
+
+Após o download, salve o arquivo em:
+
+menu/Som/menu.wav
 
 🖼️ Imagens:
 
-As imagens utilizadas estão na pasta Imagens/, com caminhos absolutos atualmente definidos no código. É recomendado ajustar os caminhos para relativos antes de distribuição (ex: ./Imagens/menu.png).
+As imagens necessárias estão localizadas na pasta:
 
-⚙️ Requisitos
+menu/Imagens/
+
+Certifique-se de que os arquivos a seguir estejam presentes:
+
+    menu.png
+
+    configuracao.png
+
+    pergaminho.png
+
+    Os caminhos estão definidos como absolutos no código. Para facilitar a portabilidade, recomenda-se usar caminhos relativos, como ./Imagens/menu.png.
+
+⚙️ Requisitos:
 
     Compilador C (GCC ou compatível)
 
-    raylib instalada (com suporte a áudio)
+    Biblioteca raylib instalada com suporte a áudio
 
-    Arquivos de imagem e som nos diretórios corretos
+    Arquivos .png e .wav nos diretórios corretos
 
-💡 Compilação (exemplo com gcc)
+💡 Compilação (exemplo com GCC):
 
 gcc menu.c -o menu -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+./main
 
-    Certifique-se de que os arquivos .wav e .png estejam no local certo ou ajuste os caminhos no código.
+    ✅ Certifique-se de que os arquivos .wav e .png estejam no local certo ou ajuste os caminhos no código-fonte.
