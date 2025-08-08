@@ -2,14 +2,14 @@
 #define TORRES_H
 
 #include <raylib.h>
+#include <stdbool.h>
 
+// --- Constantes ---
+#define CUSTO_SOLDADO 10
+#define CUSTO_ARQUEIRO 20
+#define CUSTO_MAGO 40
 
-#define TAMANHO_TELA 1000  //resolução
-#define ALCANCE_SOLDADO 0.5f * TAMANHO_TELA
-#define ALCANCE_ARQUEIRO 3.5f * 64  // 3.5 tiles (assumindo TILE_SIZE=64)
-#define ALCANCE_MAGO 2.0f * 64
-
-
+// --- Estruturas ---
 typedef struct {
     Vector2 posicao;
     int dano;
@@ -37,16 +37,17 @@ typedef struct {
     bool ativo;
 } Mago;
 
+// --- Funções Públicas ---
+void iniciar_torres(void);
+void liberar_torres(void);
 
-static inline Soldado criarSoldado(Vector2 pos) {
-    
-}
+Soldado criar_soldado(Vector2 posicao, float largura_mundo);
+Arqueiro criar_arqueiro(Vector2 posicao, float largura_mundo);
+Mago criar_mago(Vector2 posicao, float largura_mundo);
 
-static inline Arqueiro criarArqueiro(Vector2 pos) {
-  
-}
-
-static inline Mago criarMago(Vector2 pos) {
-}
+void desenhar_soldado(Soldado soldado);
+void desenhar_arqueiro(Arqueiro arqueiro);
+void desenhar_mago(Mago mago);
 
 #endif
+ 
