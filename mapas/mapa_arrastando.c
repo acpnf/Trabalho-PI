@@ -183,11 +183,43 @@ int main(void) {
         }
 
         // Mostrar moedas
-        DrawText(TextFormat("Moedas: %d", moedas), 20, 20, 30, GOLD);
-        DrawTexture(coracacao_vida, 20, 60, WHITE);
-        DrawText(TextFormat("%d HP", vida), 20 + coracacao_vida.width + 10, 65, 25, RED);
+        const char* textoMoedas = TextFormat("Moedas: %d", moedas);
+        int xMoedas = 20;
+        int yMoedas = 20;
+        int fontSizeMoedas = 30;
+
+        // Borda preta 4 direções
+        DrawText(textoMoedas, xMoedas - 1, yMoedas, fontSizeMoedas, BLACK);
+        DrawText(textoMoedas, xMoedas + 1, yMoedas, fontSizeMoedas, BLACK);
+        DrawText(textoMoedas, xMoedas, yMoedas - 1, fontSizeMoedas, BLACK);
+        DrawText(textoMoedas, xMoedas, yMoedas + 1, fontSizeMoedas, BLACK);
+
+        // Texto principal em dourado
+        DrawText(textoMoedas, xMoedas, yMoedas, fontSizeMoedas, GOLD);
         DrawText("Arraste torres para o mapa", 20, altura - 30, 20, LIGHTGRAY);
 
+        // Mostrar coracao 
+        Rectangle sourceRec = { 0, 0, coracacao_vida.width, coracacao_vida.height };
+        Rectangle destRec = { 20, 60, 32, 32 };  
+        Vector2 origin = { 0, 0 };
+        DrawTexturePro(coracacao_vida, sourceRec, destRec, origin, 0.0f, WHITE);
+        DrawText(TextFormat("%d HP", vida), 20 + 32 + 10, 65, 25, RED);
+
+        
+        const char* textoVida = TextFormat("%d HP", vida);
+        int xVida = 20 + 32 + 10;
+        int yVida = 65;
+        int fontSize = 25;
+
+        // Desenha borda branca (4 direções)
+        DrawText(textoVida, xVida - 1, yVida, fontSize, BLACK);
+        DrawText(textoVida, xVida + 1, yVida, fontSize, BLACK);
+        DrawText(textoVida, xVida, yVida - 1, fontSize, BLACK);
+        DrawText(textoVida, xVida, yVida + 1, fontSize, BLACK);
+
+        // Desenha texto principal em vermelho
+        DrawText(textoVida, xVida, yVida, fontSize, RED);
+        
         EndDrawing();
     }
 
