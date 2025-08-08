@@ -7,9 +7,9 @@ static Texture2D sprite_arqueiro;
 static Texture2D sprite_mago;
 
 void iniciar_torres(){
-    sprite_soldado = LoadTexture("inimigo.png");
-    sprite_arqueiro = LoadTexture("arqueiro.png");
-    sprite_mago = LoadTexture("mago.png");
+    sprite_soldado = LoadTexture("torre_soldado.png");
+    sprite_arqueiro = LoadTexture("torre_arqueiro.png");
+    sprite_mago = LoadTexture("torre_mago.png");
 }
 
 Soldado criar_soldado(Vector2 posicao, float alcance) {

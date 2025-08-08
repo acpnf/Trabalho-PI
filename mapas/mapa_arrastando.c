@@ -22,11 +22,11 @@ int main(void) {
     SetTargetFPS(60);
 
     // Carregar texturas do mapa
-    Texture2D grama_textura = LoadTexture("mapas/imagens/grama.png");
-    Texture2D caminho_textura = LoadTexture("mapas/imagens/caminho.png");
-    Texture2D sprite_mago = LoadTexture("personagens/torres/pngsTeste/tower_4_transparent-removebg-preview.png");
-    Texture2D sprite_arqueiro = LoadTexture("personagens/torres/pngsTeste/tower_5_transparent-removebg-preview.png");
-    Texture2D sprite_soldado = LoadTexture("personagens/torres/pngsTeste/tower_6_transparent-removebg-preview.png");
+    Texture2D grama_textura = LoadTexture("grama.png");
+    Texture2D caminho_textura = LoadTexture("caminho.png");
+    Texture2D sprite_mago = LoadTexture("torre_mago.png");
+    Texture2D sprite_arqueiro = LoadTexture("torre_arqueiro.png");
+    Texture2D sprite_soldado = LoadTexture("torre_soldado.png");
 
     // Inicializar torres (carrega os sprites internos)
     iniciar_torres();
