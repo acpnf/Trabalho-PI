@@ -27,6 +27,7 @@ int main(void) {
     Texture2D sprite_mago = LoadTexture("personagens/torres/pngsTeste/tower_4_transparent-removebg-preview.png");
     Texture2D sprite_arqueiro = LoadTexture("personagens/torres/pngsTeste/tower_5_transparent-removebg-preview.png");
     Texture2D sprite_soldado = LoadTexture("personagens/torres/pngsTeste/tower_6_transparent-removebg-preview.png");
+    Texture2D coracacao_vida = LoadTexture("mapas/imagens/coracacao_vida.png");
 
     // Inicializar torres (carrega os sprites internos)
     iniciar_torres();
@@ -56,6 +57,9 @@ int main(void) {
     int moedas = 100;
     int custos[TORRE_TOTAL] = {CUSTO_SOLDADO, CUSTO_ARQUEIRO, CUSTO_MAGO};
     const char* nomes_torres[TORRE_TOTAL] = {"Soldado", "Arqueiro", "Mago"};
+
+    // Sistema de vida 
+    int vida = 500; 
 
     // Controle de torres
     bool arrastando = false;
@@ -180,6 +184,8 @@ int main(void) {
 
         // Mostrar moedas
         DrawText(TextFormat("Moedas: %d", moedas), 20, 20, 30, GOLD);
+        DrawTexture(coracacao_vida, 20, 60, WHITE);
+        DrawText(TextFormat("%d HP", vida), 20 + coracacao_vida.width + 10, 65, 25, RED);
         DrawText("Arraste torres para o mapa", 20, altura - 30, 20, LIGHTGRAY);
 
         EndDrawing();
