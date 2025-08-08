@@ -20,12 +20,12 @@ int main() {
     InitAudioDevice();
 
     // Carrega as texturas
-    Texture2D background = LoadTexture("/home/CIN/gafv/Downloads/menu.png");
-    Texture2D icon = LoadTexture("/home/CIN/gafv/Downloads/configuracao.png");
-    Texture2D pergaminho = LoadTexture("/home/CIN/gafv/Downloads/pergaminho.png");
+    Texture2D background = LoadTexture("Menu/menu/imagens/menu.png");
+    Texture2D icon = LoadTexture("Menu/menu/imagens/configuracao.png");
+    Texture2D pergaminho = LoadTexture("Menu/menu/imagens/pergaminho.png");
 
     // Carrega a música
-    Music musica = LoadMusicStream("/home/CIN/gafv/Downloads/menu.wav");  // ou .mp3
+    Music musica = LoadMusicStream("Menu/menu/Som/menu.wav");  // ou .mp3
     
     Color LIGHTGREEN = (Color){144, 238, 144, 255};  
     Color LIGHTCORAL = (Color){240, 128, 128, 255}; 
