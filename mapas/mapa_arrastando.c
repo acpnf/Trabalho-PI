@@ -15,6 +15,11 @@ typedef enum {
     TORRE_TOTAL
 } TipoTorre;
 
+typedef enum {
+    JOGO,
+    CONFIGURACOES
+} EstadoTela;
+
 bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arqueiro* arqueiros, int num_arqueiros, Mago* magos, int num_magos) {
     int centroX = x * TILE_SIZE + TILE_SIZE / 2;
     int centroY = y * TILE_SIZE + TILE_SIZE / 2;
@@ -58,6 +63,19 @@ int main(void) {
     Texture2D sprite_soldado = LoadTexture("mapas/imagens/torre_geral.png");
     Texture2D coracacao_vida = LoadTexture("mapas/imagens/coracao_vida.png");
     Texture2D imagem_moeda = LoadTexture("mapas/imagens/moeda.png");
+    Texture2D icon = LoadTexture("Menu/menu/imagens/configuracao.png");
+    Texture2D pergaminho = LoadTexture("Menu/menu/imagens/pergaminho.png");
+
+    Music musica = LoadMusicStream("Menu/menu/Som/menu.wav");
+
+    // Botões das configurações 
+    Rectangle botaoConfiguracao = {largura - 60, 20, 40, 40};
+    Rectangle botaoVoltar = {largura/2 + 90, 450, 75, 40};
+    Rectangle desligarSom = {largura/2 - 160, 180, 115, 40};
+    Rectangle telacheia = {largura/2 - 160, 230, 190, 40};
+    Rectangle botaoSair = {largura/2 - 160, 280, 140, 40};
+
+    EstadoTela telaAtual = JOGO;
 
     // Inicializar torres (carrega os sprites internos)
     iniciar_torres();
@@ -103,6 +121,11 @@ int main(void) {
         Vector2 mousePos = GetMousePosition();
         int tileX = mousePos.x / TILE_SIZE;
         int tileY = mousePos.y / TILE_SIZE;
+
+        PlayMusicStream(musica);
+
+        bool somLigado = true;
+        bool telaCheia = false;
 
         // Clique no menu lateral
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -212,19 +235,93 @@ int main(void) {
             );
         }
 
+        // Tela de configurações
+        Vector2 mouse = GetMousePosition();
+        Vector2 origin = {0, 0};
+
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            if (telaAtual == JOGO) {
+                if (CheckCollisionPointRec(mouse, botaoConfiguracao)) {
+                    telaAtual = CONFIGURACOES;
+                }
+            }
+            else if (telaAtual == CONFIGURACOES) {
+                if (CheckCollisionPointRec(mouse, botaoVoltar)) {
+                    telaAtual = JOGO;
+                }
+            }
+        }
+
+        if (telaAtual == CONFIGURACOES) {
+            UpdateMusicStream(musica);
+
+            Rectangle sourceRecPergaminho = { 0, 0, (float)pergaminho.width, (float)pergaminho.height };
+            Rectangle destRecPergaminho = { largura/2 - 350, altura/2 - 320, 700, 650 };
+            DrawTexturePro(pergaminho, sourceRecPergaminho, destRecPergaminho, origin, 0.0f, WHITE);
+
+            DrawText("CONFIGURAÇÕES", 630, 130, 20, BLACK);
+            
+            DrawRectangleRec(desligarSom, LIGHTGRAY);
+            DrawRectangleRec(telacheia, LIGHTGRAY);
+            DrawRectangleRec(botaoVoltar, LIGHTGRAY);
+            DrawRectangleRec(botaoSair, LIGHTGRAY);
+            DrawText("Voltar", largura/2 + 95, 460, 20, BLACK);
+            DrawText("Sair do jogo", largura/2 - 155, 290, 20, BLACK);
+            
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                if (CheckCollisionPointRec(mouse, desligarSom)) {
+                    somLigado = !somLigado;
+                    if (somLigado) {
+                        PlayMusicStream(musica);
+                    } else {
+                        StopMusicStream(musica);
+                    }
+                }
+                else if (CheckCollisionPointRec(mouse, botaoSair)) {
+                    break;
+                }
+            }
+
+            if (somLigado) {
+                DrawText("Som: [ON]", desligarSom.x + 5, desligarSom.y + 10, 20, BLACK);
+            } else {
+                DrawText("Som: [OFF]", desligarSom.x + 5, desligarSom.y + 10, 20, DARKGRAY);
+            }
+
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                if (CheckCollisionPointRec(mouse, telacheia)) {
+                    telaCheia = !telaCheia;
+                    ToggleFullscreen();
+                    if (!telaCheia && IsWindowFullscreen()) {
+                        SetWindowSize(largura, altura);
+                    }
+                }
+            }
+            
+            if (telaCheia) {
+                DrawText("Tela Cheia: [ON]", telacheia.x + 5, telacheia.y + 10, 20, BLACK);
+            } else {
+                DrawText("Tela Cheia: [OFF]", telacheia.x + 5, telacheia.y + 10, 20, DARKGRAY);
+            }
+        }
+
+        if(telaAtual != CONFIGURACOES) {
+            Rectangle sourceRecIcon = { 0, 0, (float)icon.width, (float)icon.height };
+            DrawTexturePro(icon, sourceRecIcon, botaoConfiguracao, origin, 0.0f, WHITE);
+        }
+
         // Mostrar moedas
         Rectangle sourceMoeda = {0, 0, imagem_moeda.width, imagem_moeda.height};
         Rectangle destMoeda = {20, 20, 32, 32}; 
-        Vector2 originMoeda = {0, 0};
 
         const char* textoMoedas = TextFormat("%d coins", moedas);
         int xMoedas = 62;
         int yMoedas = 20;
         int fontSizeMoedas = 30;
 
-        DrawTexturePro(imagem_moeda, sourceMoeda, destMoeda, originMoeda, 0.0f, WHITE);
+        DrawTexturePro(imagem_moeda, sourceMoeda, destMoeda, origin, 0.0f, WHITE);
         DrawText(TextFormat("%d HP", vida), 62, 65, 25, RED);
-
 
         // Borda preta 4 direções
         DrawText(textoMoedas, xMoedas - 1, yMoedas, fontSizeMoedas, BLACK);
@@ -239,7 +336,6 @@ int main(void) {
         // Mostrar coracao 
         Rectangle sourceRec = {0, 0, coracacao_vida.width, coracacao_vida.height};
         Rectangle destRec = {20, 60, 32, 32};  
-        Vector2 origin = {0, 0};
 
         DrawTexturePro(coracacao_vida, sourceRec, destRec, origin, 0.0f, WHITE);
         DrawText(TextFormat("%d HP", vida), 62, 65, 25, RED);
@@ -269,6 +365,10 @@ int main(void) {
     UnloadTexture(sprite_soldado);
     UnloadTexture(sprite_arqueiro);
     UnloadTexture(sprite_mago);
+    UnloadTexture(icon);
+    UnloadTexture(pergaminho);
+    UnloadTexture(coracacao_vida);
+    UnloadTexture(imagem_moeda);
 
     CloseWindow();
     return 0;
