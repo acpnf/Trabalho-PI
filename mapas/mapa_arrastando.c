@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include <stdio.h>
 #include "torres.h"
+#include "menu.h"
 
 #define TILE_SIZE 64
 #define LINHAS_MAPA 10
@@ -15,6 +16,9 @@ typedef enum {
 } TipoTorre;
 
 int main(void) {
+
+    IniciarMenu(); // Inicia o menu antes do jogo
+
     const int largura = TILE_SIZE * COLUNAS_MAPA + 150;  // Inclui espaço para menu lateral
     const int altura = TILE_SIZE * LINHAS_MAPA;
 
