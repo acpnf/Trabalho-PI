@@ -20,13 +20,18 @@ int main() {
     InitAudioDevice();
 
     // Carrega as texturas
-    Texture2D background = LoadTexture("/home/pablo-nunes/Documentos/Códigos/menu/Imagens/menu.png");
-    Texture2D icon = LoadTexture("/home/pablo-nunes/Documentos/Códigos/menu/Imagens/configuracao.png");
-    Texture2D pergaminho = LoadTexture("/home/pablo-nunes/Documentos/Códigos/menu/Imagens/pergaminho.png");
+    Texture2D background = LoadTexture("/home/CIN/gafv/Downloads/menu.png");
+    Texture2D icon = LoadTexture("/home/CIN/gafv/Downloads/configuracao.png");
+    Texture2D pergaminho = LoadTexture("/home/CIN/gafv/Downloads/pergaminho.png");
 
     // Carrega a música
-    Music musica = LoadMusicStream("/home/pablo-nunes/Documentos/Códigos/menu/Som/menu.wav");  // ou .mp3
+    Music musica = LoadMusicStream("/home/CIN/gafv/Downloads/menu.wav");  // ou .mp3
     
+    Color LIGHTGREEN = (Color){144, 238, 144, 255};  
+    Color LIGHTCORAL = (Color){240, 128, 128, 255}; 
+
+    Color corBotaoIniciar = GREEN;
+    Color corBotaoSair = RED;
 
     // Criação de botões
     Rectangle botaoIniciar = {largura/2 - 100, 330, 200, 50};
@@ -48,6 +53,19 @@ int main() {
     // Loop principal do jogo
     while (!WindowShouldClose()) {
         Vector2 mouse = GetMousePosition();
+
+        if (CheckCollisionPointRec(mouse, botaoIniciar)) {
+            corBotaoIniciar = LIGHTGREEN;
+        } else {
+            corBotaoIniciar = GREEN;
+        }
+
+        if (CheckCollisionPointRec(mouse, botaoSair)) {
+            corBotaoSair = LIGHTCORAL; 
+        } else {
+            corBotaoSair = RED;
+        }
+
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             if (telaAtual == MENU_PRINCIPAL) {
@@ -88,8 +106,9 @@ int main() {
             // Atualiza a música de fundo
             UpdateMusicStream(musica); 
             
-            DrawRectangleRec(botaoIniciar, GREEN);
-            DrawRectangleRec(botaoSair, RED);
+            DrawRectangleRec(botaoIniciar, corBotaoIniciar);
+            DrawRectangleRec(botaoSair, corBotaoSair);
+
 
             int fontSize = 80;
             int x_start = 145;
@@ -117,11 +136,11 @@ int main() {
 
             DrawText("CONFIGURAÇÕES", 310, 130, 20, BLACK);
 
-            /*
+            
             DrawRectangleRec(desligarSom, LIGHTGRAY); //SERA RETIRADO DEPOIS
             DrawRectangleRec(telacheia, LIGHTGRAY); //SERA RETIRADO DEPOIS
             DrawRectangleRec(botaoVoltar, LIGHTGRAY); //SERA RETIRADO DEPOIS
-            */
+            
             
             // Desenha o botão de voltar
             DrawText("Voltar", largura/2 + 95, 460, 20, BLACK);
