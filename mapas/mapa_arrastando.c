@@ -121,9 +121,8 @@ int main(void) {
             if (tileX >= 0 && tileX < COLUNAS_MAPA &&
                 tileY >= 0 && tileY < LINHAS_MAPA &&
                 mousePos.x < menuX &&
-                mapa[tileY][tileX] == 0)
-                !existe_torre_no_tile(tileX, tileY, soldados, num_soldados, arqueiros, num_arqueiros, magos, num_magos))
-            {
+                mapa[tileY][tileX] == 0 &&
+                !existe_torre_no_tile(tileX, tileY, soldados, num_soldados, arqueiros, num_arqueiros, magos, num_magos)) {
                 Vector2 pos = {
                     tileX * TILE_SIZE + TILE_SIZE / 2,
                     tileY * TILE_SIZE + TILE_SIZE / 2
