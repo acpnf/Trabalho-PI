@@ -1,32 +1,35 @@
 #include "raylib.h"
 #include <stdio.h>
+#include "torres.h"
 
 #define TILE_SIZE 64
 #define LINHAS_MAPA 10
 #define COLUNAS_MAPA 20
-
-#define CUSTO_ROSA 1
-#define CUSTO_AMARELO 3
-#define CUSTO_LARANJA 5
+#define MAX_TORRES 100
 
 typedef enum {
-    COR_ROSA = 0,
-    COR_AMARELO,
-    COR_LARANJA,
-    COR_TOTAL
-} Cor;
+    TORRE_SOLDADO = 0,
+    TORRE_ARQUEIRO,
+    TORRE_MAGO,
+    TORRE_TOTAL
+} TipoTorre;
 
-int main(void)
-{
+int main(void) {
     const int largura = TILE_SIZE * COLUNAS_MAPA;
     const int altura = TILE_SIZE * LINHAS_MAPA;
 
-    InitWindow(largura, altura, "jogo");
+    InitWindow(largura, altura, "Jogo de Torres");
     SetTargetFPS(60);
 
-    // Carregue suas texturas aqui (certifique-se que os arquivos estão na pasta correta)
+    // Carregar texturas do mapa
     Texture2D grama_textura = LoadTexture("grama.png");
     Texture2D caminho_textura = LoadTexture("caminho.png");
+    Texture2D sprite_mago = LoadTexture("mago.png");
+    Texture2D sprite_arqueiro = LoadTexture("arqueiro.png");
+    Texture2D sprite_soldado = LoadTexture("inimigo.png");
+    
+    // Inicializar torres (carrega os sprites)
+    iniciar_torres();
 
     int mapa[LINHAS_MAPA][COLUNAS_MAPA] = {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
@@ -41,130 +44,151 @@ int main(void)
         {1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}
     };
 
-    int moedas = 10;
-    Color cores_menu[COR_TOTAL] = {
-        {255, 105, 180, 255},  // Rosa
-        {255, 255, 0, 255},    // Amarelo
-        {255, 165, 0, 255}     // Laranja
-    };
-    int custos[COR_TOTAL] = {CUSTO_ROSA, CUSTO_AMARELO, CUSTO_LARANJA};
+    // Sistema de torres
+    Soldado soldados[MAX_TORRES];
+    Arqueiro arqueiros[MAX_TORRES];
+    Mago magos[MAX_TORRES];
+    int num_soldados = 0;
+    int num_arqueiros = 0;
+    int num_magos = 0;
 
+    // Sistema de recursos
+    int moedas = 100;
+    int custos[TORRE_TOTAL] = {CUSTO_SOLDADO, CUSTO_ARQUEIRO, CUSTO_MAGO};
+    const char* nomes_torres[TORRE_TOTAL] = {"Soldado", "Arqueiro", "Mago"};
+
+    // Controle de torres
     bool arrastando = false;
-    Cor cor_arrastada = COR_ROSA;
+    TipoTorre torre_arrastada = TORRE_SOLDADO;
 
-    while (!WindowShouldClose())
-    {
-        Vector2 mouse = GetMousePosition();
-        int tileX = mouse.x / TILE_SIZE;
-        int tileY = mouse.y / TILE_SIZE;
+    while (!WindowShouldClose()) {
+        Vector2 mousePos = GetMousePosition();
+        int tileX = mousePos.x / TILE_SIZE;
+        int tileY = mousePos.y / TILE_SIZE;
 
-        int menu_x = largura - 160;
-        int menu_y = 20;
-        int menu_width = 160;
-        int menu_height = 160;
+        // Menu lateral
+        int menuWidth = 150;
+        int menuX = largura - menuWidth;
+        int altura_botao = 50;
 
-        bool mouse_clicado = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-        bool mouse_soltou = IsMouseButtonReleased(MOUSE_LEFT_BUTTON);
-
-        for (int i = 0; i < COR_TOTAL; i++)
-        {
-            int cor_pos_y = menu_y + 40 + i * 30;
-            Rectangle botao = { menu_x + 20, cor_pos_y, 20, 20 };
-
-            if (CheckCollisionPointRec(mouse, botao) && mouse_clicado)
-            {
-                if (moedas >= custos[i]) {
+        // Controle de clique
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            // Verificar clique no menu
+            if (mousePos.x > menuX) {
+                int buttonIndex = (mousePos.y - 20) / altura_botao;
+                if (buttonIndex >= 0 && buttonIndex < TORRE_TOTAL && moedas >= custos[buttonIndex]) {
                     arrastando = true;
-                    cor_arrastada = i;
+                    torre_arrastada = buttonIndex;
                 }
             }
         }
 
-        if (mouse_soltou && arrastando)
-        {
+        // Soltar torre no mapa
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && arrastando) {
+            arrastando = false;
+            
             if (tileX >= 0 && tileX < COLUNAS_MAPA &&
-                tileY >= 0 && tileY < LINHAS_MAPA)
+                tileY >= 0 && tileY < LINHAS_MAPA &&
+                mapa[tileY][tileX] == 0) // Só coloca em grama
             {
-                if (mapa[tileY][tileX] == 0 && moedas >= custos[cor_arrastada])
-                {
-                    mapa[tileY][tileX] = 2 + cor_arrastada;
-                    moedas -= custos[cor_arrastada];
-                    printf("Triângulo colocado na posição (%d, %d) com cor %d. Moedas restantes: %d\n", tileX, tileY, cor_arrastada, moedas);
+                Vector2 pos = {
+                    tileX * TILE_SIZE + TILE_SIZE/2,
+                    tileY * TILE_SIZE + TILE_SIZE/2
+                };
+                
+                switch (torre_arrastada) {
+                    case TORRE_SOLDADO:
+                        if (num_soldados < MAX_TORRES) {
+                            soldados[num_soldados++] = criar_soldado(pos, 2*TILE_SIZE);
+                            moedas -= CUSTO_SOLDADO;
+                        }
+                        break;
+                        
+                    case TORRE_ARQUEIRO:
+                        if (num_arqueiros < MAX_TORRES) {
+                            arqueiros[num_arqueiros++] = criar_arqueiro(pos, 4*TILE_SIZE);
+                            moedas -= CUSTO_ARQUEIRO;
+                        }
+                        break;
+                        
+                    case TORRE_MAGO:
+                        if (num_magos < MAX_TORRES) {
+                            magos[num_magos++] = criar_mago(pos, 6*TILE_SIZE);
+                            moedas -= CUSTO_MAGO;
+                        }
+                        break;
                 }
             }
-            arrastando = false;
         }
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        for (int y = 0; y < LINHAS_MAPA; y++)
-        {
-            for (int x = 0; x < COLUNAS_MAPA; x++)
-            {
-                if (mapa[y][x] == 1)
-                {
-                    DrawTextureRec(caminho_textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE},
-                                   (Vector2){x * TILE_SIZE, y * TILE_SIZE}, WHITE);
-                }
-                else
-                {
-                    DrawTextureRec(grama_textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE},
-                                   (Vector2){x * TILE_SIZE, y * TILE_SIZE}, WHITE);
-                }
-
-                if (mapa[y][x] >= 2)
-                {
-                    int idx_cor = mapa[y][x] - 2;
-
-                    Vector2 p1 = {x * TILE_SIZE + TILE_SIZE / 2, y * TILE_SIZE}; // topo
-                    Vector2 p2 = {x * TILE_SIZE, y * TILE_SIZE + TILE_SIZE}; // inferior esquerdo
-                    Vector2 p3 = {x * TILE_SIZE + TILE_SIZE, y * TILE_SIZE + TILE_SIZE}; // inferior direito
-                    DrawTriangle(p1, p2, p3, cores_menu[idx_cor]);
+        // Desenhar mapa
+        for (int y = 0; y < LINHAS_MAPA; y++) {
+            for (int x = 0; x < COLUNAS_MAPA; x++) {
+                Vector2 pos = {x * TILE_SIZE, y * TILE_SIZE};
+                if (mapa[y][x] == 1) {
+                    DrawTextureRec(caminho_textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
+                } else {
+                    DrawTextureRec(grama_textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
                 }
             }
         }
 
-        if (tileX >= 0 && tileX < COLUNAS_MAPA && tileY >= 0 && tileY < LINHAS_MAPA)
-        {
-            Color cor_cursor = (mapa[tileY][tileX] == 0) ? (Color){0, 0, 255, 100} : (Color){255, 0, 0, 100};
-            DrawRectangle(tileX * TILE_SIZE, tileY * TILE_SIZE, TILE_SIZE, TILE_SIZE, cor_cursor);
+        // Desenhar torres
+        for (int i = 0; i < num_soldados; i++) {
+            desenhar_soldado(soldados[i], TILE_SIZE, TILE_SIZE);
+        }
+        for (int i = 0; i < num_arqueiros; i++) {
+            desenhar_arqueiro(arqueiros[i], TILE_SIZE, TILE_SIZE);
+        }
+        for (int i = 0; i < num_magos; i++) {
+            desenhar_mago(magos[i], TILE_SIZE, TILE_SIZE);
         }
 
-        DrawRectangle(menu_x, menu_y, menu_width, menu_height, (Color){50, 50, 50, 200});
-        DrawText("Menu de cores:", menu_x + 10, menu_y + 10, 20, RAYWHITE);
+        // Desenhar menu lateral
+        DrawRectangle(menuX, 0, menuWidth, altura, (Color){50, 50, 50, 200});
+        DrawText("LOJA DE TORRES", menuX + 10, 10, 20, RAYWHITE);
+        
+        for (int i = 0; i < TORRE_TOTAL; i++) {
+            int yPos = 40 + i * altura_botao;
+            bool podeComprar = (moedas >= custos[i]);
+            Color cor = podeComprar ? RAYWHITE : GRAY;
+            
+            DrawRectangle(menuX + 10, yPos, menuWidth - 20, altura_botao - 10, (Color){70, 70, 70, 200});
+            DrawText(nomes_torres[i], menuX + 20, yPos + 5, 20, cor);
+            DrawText(TextFormat("%d moedas", custos[i]), menuX + 20, yPos + 25, 15, cor);
+        }
 
-        for (int i = 0; i < COR_TOTAL; i++)
-        {
-            Color cor_atual = cores_menu[i];
-            if (moedas < custos[i])
-                cor_atual = (Color){ cor_atual.r / 3, cor_atual.g / 3, cor_atual.b / 3, cor_atual.a };
-
-            int cor_pos_y = menu_y + 40 + i * 30;
-            DrawRectangle(menu_x + 20, cor_pos_y, 20, 20, cor_atual);
-            DrawText(
-                (i == COR_ROSA) ? "Rosa" :
-                (i == COR_AMARELO) ? "Amarelo" : "Laranja",
-                menu_x + 50, cor_pos_y, 20, RAYWHITE
+        // Torre sendo arrastada
+        if (arrastando) {
+            Texture2D sprite = (torre_arrastada == TORRE_SOLDADO) ? sprite_soldado :
+                              (torre_arrastada == TORRE_ARQUEIRO) ? sprite_arqueiro : sprite_mago;
+            
+            DrawTexturePro(
+                sprite,
+                (Rectangle){0, 0, sprite.width, sprite.height},
+                (Rectangle){mousePos.x, mousePos.y, TILE_SIZE, TILE_SIZE},
+                (Vector2){TILE_SIZE/2, TILE_SIZE/2},
+                0,
+                WHITE
             );
         }
 
-        char buffer[30];
-        snprintf(buffer, sizeof(buffer), "Moedas: %d", moedas);
-        DrawText(buffer, menu_x + 10, menu_y + menu_height - 30, 25, GOLD);
+        // Mostrar moedas
+        DrawText(TextFormat("Moedas: %d", moedas), 20, 20, 30, GOLD);
 
-        if (arrastando)
-        {
-            Color cor = cores_menu[cor_arrastada];
-            DrawRectangle(mouse.x - 16, mouse.y - 16, TILE_SIZE - 32, TILE_SIZE - 32, cor);
-        }
+        // Dica de jogo
+        DrawText("Arraste torres para o mapa", 20, altura - 30, 20, LIGHTGRAY);
 
         EndDrawing();
     }
 
+    // Limpeza
+    liberar_torres();
     UnloadTexture(grama_textura);
     UnloadTexture(caminho_textura);
-
     CloseWindow();
     return 0;
 }
