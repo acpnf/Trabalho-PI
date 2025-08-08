@@ -41,13 +41,12 @@ typedef struct {
 void iniciar_torres(void);
 void liberar_torres(void);
 
-Soldado criar_soldado(Vector2 posicao, float largura_mundo);
-Arqueiro criar_arqueiro(Vector2 posicao, float largura_mundo);
-Mago criar_mago(Vector2 posicao, float largura_mundo);
+Soldado criar_soldado(Vector2 posicao, float alcance);
+Arqueiro criar_arqueiro(Vector2 posicao, float alcance);
+Mago criar_mago(Vector2 posicao, float alcance);
 
-void desenhar_soldado(Soldado soldado);
-void desenhar_arqueiro(Arqueiro arqueiro);
-void desenhar_mago(Mago mago);
+void desenhar_soldado(Soldado soldado, float width, float height);
+void desenhar_arqueiro(Arqueiro arqueiro, float width, float height);
+void desenhar_mago(Mago mago, float width, float height);
 
 #endif
- 
