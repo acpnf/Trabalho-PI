@@ -32,6 +32,7 @@ int main(void) {
     Texture2D sprite_arqueiro = LoadTexture("personagens/torres/pngsTeste/tower_5_transparent-removebg-preview.png");
     Texture2D sprite_soldado = LoadTexture("personagens/torres/pngsTeste/tower_6_transparent-removebg-preview.png");
     Texture2D coracacao_vida = LoadTexture("mapas/imagens/coracacao_vida.png");
+    Texture2D imagem_moeda = LoadTexture("mapas/imagens/moeda.png");
 
     // Inicializar torres (carrega os sprites internos)
     iniciar_torres();
@@ -187,10 +188,18 @@ int main(void) {
         }
 
         // Mostrar moedas
-        const char* textoMoedas = TextFormat("Moedas: %d", moedas);
-        int xMoedas = 20;
+        Rectangle sourceMoeda = {0, 0, imagem_moeda.width, imagem_moeda.height};
+        Rectangle destMoeda = {20, 20, 32, 32}; 
+        Vector2 originMoeda = {0, 0};
+
+        const char* textoMoedas = TextFormat("%d coins", moedas);
+        int xMoedas = 62;
         int yMoedas = 20;
         int fontSizeMoedas = 30;
+
+        DrawTexturePro(imagem_moeda, sourceMoeda, destMoeda, originMoeda, 0.0f, WHITE);
+        DrawText(TextFormat("%d HP", vida), 62, 65, 25, RED);
+
 
         // Borda preta 4 direções
         DrawText(textoMoedas, xMoedas - 1, yMoedas, fontSizeMoedas, BLACK);
@@ -203,19 +212,20 @@ int main(void) {
         DrawText("Arraste torres para o mapa", 20, altura - 30, 20, LIGHTGRAY);
 
         // Mostrar coracao 
-        Rectangle sourceRec = { 0, 0, coracacao_vida.width, coracacao_vida.height };
-        Rectangle destRec = { 20, 60, 32, 32 };  
-        Vector2 origin = { 0, 0 };
+        Rectangle sourceRec = {0, 0, coracacao_vida.width, coracacao_vida.height};
+        Rectangle destRec = {20, 60, 32, 32};  
+        Vector2 origin = {0, 0};
+
         DrawTexturePro(coracacao_vida, sourceRec, destRec, origin, 0.0f, WHITE);
-        DrawText(TextFormat("%d HP", vida), 20 + 32 + 10, 65, 25, RED);
+        DrawText(TextFormat("%d HP", vida), 62, 65, 25, RED);
 
         
         const char* textoVida = TextFormat("%d HP", vida);
-        int xVida = 20 + 32 + 10;
+        int xVida = 62;
         int yVida = 65;
         int fontSize = 25;
 
-        // Desenha borda branca (4 direções)
+        // Borda preta
         DrawText(textoVida, xVida - 1, yVida, fontSize, BLACK);
         DrawText(textoVida, xVida + 1, yVida, fontSize, BLACK);
         DrawText(textoVida, xVida, yVida - 1, fontSize, BLACK);
