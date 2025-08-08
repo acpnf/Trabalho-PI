@@ -15,6 +15,31 @@ typedef enum {
     TORRE_TOTAL
 } TipoTorre;
 
+bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arqueiro* arqueiros, int num_arqueiros, Mago* magos, int num_magos) {
+    int centroX = x * TILE_SIZE + TILE_SIZE / 2;
+    int centroY = y * TILE_SIZE + TILE_SIZE / 2;
+
+    for (int i = 0; i < num_soldados; i++) {
+        if (soldados[i].posicao.x == centroX && soldados[i].posicao.y == centroY) {
+            return true;
+        }
+    }
+
+    for (int i = 0; i < num_arqueiros; i++) {
+        if (arqueiros[i].posicao.x == centroX && arqueiros[i].posicao.y == centroY) {
+            return true;
+        }
+    }
+
+    for (int i = 0; i < num_magos; i++) {
+        if (magos[i].posicao.x == centroX && magos[i].posicao.y == centroY) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 int main(void) {
 
     IniciarMenu(); // Inicia o menu antes do jogo
@@ -97,6 +122,7 @@ int main(void) {
                 tileY >= 0 && tileY < LINHAS_MAPA &&
                 mousePos.x < menuX &&
                 mapa[tileY][tileX] == 0)
+                !existe_torre_no_tile(tileX, tileY, soldados, num_soldados, arqueiros, num_arqueiros, magos, num_magos))
             {
                 Vector2 pos = {
                     tileX * TILE_SIZE + TILE_SIZE / 2,
