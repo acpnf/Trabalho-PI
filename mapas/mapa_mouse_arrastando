@@ -25,8 +25,8 @@ int main(void)
     SetTargetFPS(60);
 
     // Carregue suas texturas aqui (certifique-se que os arquivos estão na pasta correta)
-    Texture2D grama_textura = LoadTexture("grama.png");
-    Texture2D caminho_textura = LoadTexture("caminho.png");
+    Texture2D grama_textura = LoadTexture("mapas/imagens/grama.png");
+    Texture2D caminho_textura = LoadTexture("mapas/imagens/caminho.png");
 
     int mapa[LINHAS_MAPA][COLUNAS_MAPA] = {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
@@ -89,7 +89,6 @@ int main(void)
                 {
                     mapa[tileY][tileX] = 2 + cor_arrastada;
                     moedas -= custos[cor_arrastada];
-                    printf("Triângulo colocado na posição (%d, %d) com cor %d. Moedas restantes: %d\n", tileX, tileY, cor_arrastada, moedas);
                 }
             }
             arrastando = false;
