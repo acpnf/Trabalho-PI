@@ -34,9 +34,11 @@ PESQUISAR LOGICA PRA MIRAR NOS ALVOS
 
 <img width="664" height="419" alt="image" src="https://github.com/user-attachments/assets/bc70629c-50ea-48b5-a0bb-263d18aed400" />
 
-
-
 <img width="249" height="76" alt="caminho" src="https://github.com/user-attachments/assets/bd7c1fed-7325-4a59-a525-c6cc89b2fde2" />
 
 <img width="225" height="225" alt="grama" src="https://github.com/user-attachments/assets/4b973955-2497-43cb-bfa3-b9d3996b4857" />
+
+
+gcc jogo.c torres.c -o jogo -I. -lraylib -lm -lpthread -ldl -lX11 -lGL
+./jogo
 
