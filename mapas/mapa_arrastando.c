@@ -31,7 +31,7 @@ int main(void) {
     Texture2D sprite_mago = LoadTexture("personagens/torres/pngsTeste/tower_4_transparent-removebg-preview.png");
     Texture2D sprite_arqueiro = LoadTexture("personagens/torres/pngsTeste/tower_5_transparent-removebg-preview.png");
     Texture2D sprite_soldado = LoadTexture("personagens/torres/pngsTeste/tower_6_transparent-removebg-preview.png");
-    Texture2D coracacao_vida = LoadTexture("mapas/imagens/coracacao_vida.png");
+    Texture2D coracacao_vida = LoadTexture("mapas/imagens/coracao_vida.png");
     Texture2D imagem_moeda = LoadTexture("mapas/imagens/moeda.png");
 
     // Inicializar torres (carrega os sprites internos)
