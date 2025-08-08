@@ -22,11 +22,11 @@ int main(void) {
     SetTargetFPS(60);
 
     // Carregar texturas do mapa
-    Texture2D grama_textura = LoadTexture("grama.png");
-    Texture2D caminho_textura = LoadTexture("caminho.png");
-    Texture2D sprite_mago = LoadTexture("torre_mago.png");
-    Texture2D sprite_arqueiro = LoadTexture("torre_arqueiro.png");
-    Texture2D sprite_soldado = LoadTexture("torre_soldado.png");
+    Texture2D grama_textura = LoadTexture("mapas/imagens/grama.png");
+    Texture2D caminho_textura = LoadTexture("mapas/imagens/caminho.png");
+    Texture2D sprite_mago = LoadTexture("personagens/torres/pngsTeste/tower_4_transparent-removebg-preview.png");
+    Texture2D sprite_arqueiro = LoadTexture("personagens/torres/pngsTeste/tower_5_transparent-removebg-preview.png");
+    Texture2D sprite_soldado = LoadTexture("personagens/torres/pngsTeste/tower_6_transparent-removebg-preview.png");
 
     // Inicializar torres (carrega os sprites internos)
     iniciar_torres();
@@ -136,15 +136,16 @@ int main(void) {
             DrawRectangle(tileX * TILE_SIZE, tileY * TILE_SIZE, TILE_SIZE, TILE_SIZE, cor_cursor);
         }
 
+        float tamanho_torre = 100;
         // Desenhar torres no mapa
         for (int i = 0; i < num_soldados; i++) {
-            desenhar_soldado(soldados[i], TILE_SIZE, TILE_SIZE);
+            desenhar_soldado(soldados[i], tamanho_torre, tamanho_torre);
         }
         for (int i = 0; i < num_arqueiros; i++) {
-            desenhar_arqueiro(arqueiros[i], TILE_SIZE, TILE_SIZE);
+            desenhar_arqueiro(arqueiros[i], tamanho_torre, tamanho_torre);
         }
         for (int i = 0; i < num_magos; i++) {
-            desenhar_mago(magos[i], TILE_SIZE, TILE_SIZE);
+            desenhar_mago(magos[i], tamanho_torre, tamanho_torre);
         }
 
         // Desenhar menu lateral
