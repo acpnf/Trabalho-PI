@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include <stdio.h>
+#include <math.h>
 #include "torres.h"
 #include "menu.h"
 #include "inimigos.h"
@@ -350,6 +351,12 @@ int main(void) {
         if(telaAtual != CONFIGURACOES) {
             Rectangle sourceRecIcon = { 0, 0, (float)icon.width, (float)icon.height };
             DrawTexturePro(icon, sourceRecIcon, botaoConfiguracao, origin, 0.0f, WHITE);
+        }
+
+        // Faz a instrução ficar piscando a cada 1 seg
+        if (fmod(GetTime(), 2.0) < 1.0) {
+            DrawText("Arraste as torres", 1285, altura - 370, 15, LIGHTGRAY);
+            DrawText("para o mapa", 1310, altura - 350, 15, LIGHTGRAY);
         }
 
         // Mostrar moedas
