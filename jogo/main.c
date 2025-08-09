@@ -56,13 +56,13 @@ int main(void) {
     SetTargetFPS(60);
 
     // Carregar texturas do mapa
-    Texture2D grama_textura = LoadTexture("mapas/imagens/grama.png");
-    Texture2D caminho_textura = LoadTexture("mapas/imagens/caminho.png");
-    Texture2D sprite_mago = LoadTexture("mapas/imagens/torre_mago.png");
-    Texture2D sprite_arqueiro = LoadTexture("mapas/imagens/torre_arqueiro.png");
-    Texture2D sprite_soldado = LoadTexture("mapas/imagens/torre_geral.png");
-    Texture2D coracacao_vida = LoadTexture("mapas/imagens/coracao_vida.png");
-    Texture2D imagem_moeda = LoadTexture("mapas/imagens/moeda.png");
+    Texture2D grama_textura = LoadTexture("jogo/imagens/grama.png");
+    Texture2D caminho_textura = LoadTexture("jogo/imagens/caminho.png");
+    Texture2D sprite_mago = LoadTexture("jogo/imagens/torre_mago.png");
+    Texture2D sprite_arqueiro = LoadTexture("jogo/imagens/torre_arqueiro.png");
+    Texture2D sprite_soldado = LoadTexture("jogo/imagens/torre_geral.png");
+    Texture2D coracacao_vida = LoadTexture("jogo/imagens/coracao_vida.png");
+    Texture2D imagem_moeda = LoadTexture("jogo/imagens/moeda.png");
     Texture2D icon = LoadTexture("Menu/menu/imagens/configuracao.png");
     Texture2D pergaminho = LoadTexture("Menu/menu/imagens/pergaminho.png");
 
