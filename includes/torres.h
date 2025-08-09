@@ -17,8 +17,6 @@ typedef struct {
     float cooldown;
     int custo;
     bool ativo;
-    double tempoFimTiro;
-    double tempoUltimoTiro;
 } Soldado;
 
 typedef struct {
@@ -28,8 +26,6 @@ typedef struct {
     float cooldown;
     int custo;
     bool ativo;
-    double tempoFimTiro;
-    double tempoUltimoTiro;
 } Arqueiro;
 
 typedef struct {
@@ -39,8 +35,6 @@ typedef struct {
     float cooldown;
     int custo;
     bool ativo;
-    double tempoFimTiro;
-    double tempoUltimoTiro;
 } Mago;
 
 // --- Funções Públicas ---

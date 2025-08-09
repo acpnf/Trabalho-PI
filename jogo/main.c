@@ -1,11 +1,8 @@
 #include "raylib.h"
 #include <stdio.h>
-#include <math.h>
 #include "torres.h"
 #include "menu.h"
 #include "inimigos.h"
-#include <raymath.h>
-
 
 #define TILE_SIZE 64
 #define LINHAS_MAPA 10
@@ -223,70 +220,11 @@ int main(void) {
             lastMoveTime = currentTime;
         }
 
-
-        double agora = GetTime();
-        Vector2 inimigo_pos = { inimigo.posX * TILE_SIZE + TILE_SIZE / 2, inimigo.posY * TILE_SIZE + TILE_SIZE / 2 };
-
-        // Soldados
-        for (int i = 0; i < num_soldados; i++) {
-            if (!soldados[i].ativo) continue;
-            float dist = Vector2Distance(soldados[i].posicao, inimigo_pos);
-            if (dist <= soldados[i].alcance) {
-                if (agora - soldados[i].tempoUltimoTiro >= soldados[i].cooldown) {
-                    inimigo.vida -= soldados[i].dano;
-                    soldados[i].tempoUltimoTiro = agora;
-                    soldados[i].tempoFimTiro = agora + 0.1;
-                    printf("Soldado %d atirou! Vida inimigo: %d\n", i, inimigo.vida);
-                }
-                if (agora <= soldados[i].tempoFimTiro) {
-                    DrawLineV(soldados[i].posicao, inimigo_pos, RED);
-                }
-            }
-        }
-
-        // Arqueiros
-        for (int i = 0; i < num_arqueiros; i++) {
-            if (!arqueiros[i].ativo) continue;
-            float dist = Vector2Distance(arqueiros[i].posicao, inimigo_pos);
-            if (dist <= arqueiros[i].alcance) {
-                if (agora - arqueiros[i].tempoUltimoTiro >= arqueiros[i].cooldown) {
-                    inimigo.vida -= arqueiros[i].dano;
-                    arqueiros[i].tempoUltimoTiro = agora;
-                    arqueiros[i].tempoFimTiro = agora + 0.1;
-                    printf("Arqueiro %d atirou! Vida inimigo: %d\n", i, inimigo.vida);
-                }
-                if (agora <= arqueiros[i].tempoFimTiro) {
-                    DrawLineV(arqueiros[i].posicao, inimigo_pos, GREEN);
-                }
-            }
-        }
-
-        // Magos
-        for (int i = 0; i < num_magos; i++) {
-            if (!magos[i].ativo) continue;
-            float dist = Vector2Distance(magos[i].posicao, inimigo_pos);
-            if (dist <= magos[i].alcance) {
-                if (agora - magos[i].tempoUltimoTiro >= magos[i].cooldown) {
-                    inimigo.vida -= magos[i].dano;
-                    magos[i].tempoUltimoTiro = agora;
-                    magos[i].tempoFimTiro = agora + 0.1;
-                    printf("Mago %d atirou! Vida inimigo: %d\n", i, inimigo.vida);
-                }
-                if (agora <= magos[i].tempoFimTiro) {
-                    DrawLineV(magos[i].posicao, inimigo_pos, BLUE);
-                }
-            }
-        }
-
-
-
-
-        if (inimigo.vida > 0) {
-            Vector2 position = { inimigo.posY * 64.0f, inimigo.posX * 64.0f };
-            Vector2 scale = { 64.0f / inimigoSprite.width, 64.0f / inimigoSprite.height };
-            DrawTexturePro(inimigoSprite, sourceRec, (Rectangle){position.x, position.y, 64.0f, 64.0f},
-                        (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
-        }
+         // Desenha o inimigo (escala para 64x64)
+        Vector2 position = { inimigo.posY * 64.0f, inimigo.posX * 64.0f };
+        Vector2 scale = { 64.0f / inimigoSprite.width, 64.0f / inimigoSprite.height };
+        // Ajusta o desenho da textura para a célula do mapa
+        DrawTexturePro(inimigoSprite, sourceRec, (Rectangle){position.x, position.y, 64.0f, 64.0f}, (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
 
         // Desenhar tile azul/vermelho no cursor
         if (tileX >= 0 && tileX < COLUNAS_MAPA && tileY >= 0 && tileY < LINHAS_MAPA) {
@@ -412,12 +350,6 @@ int main(void) {
         if(telaAtual != CONFIGURACOES) {
             Rectangle sourceRecIcon = { 0, 0, (float)icon.width, (float)icon.height };
             DrawTexturePro(icon, sourceRecIcon, botaoConfiguracao, origin, 0.0f, WHITE);
-        }
-
-        // Faz a instrução ficar piscando a cada 1 seg
-        if (fmod(GetTime(), 2.0) < 1.0) {
-            DrawText("Arraste as torres", 1285, altura - 370, 15, LIGHTGRAY);
-            DrawText("para o mapa", 1310, altura - 350, 15, LIGHTGRAY);
         }
 
         // Mostrar moedas
