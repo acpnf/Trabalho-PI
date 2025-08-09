@@ -40,5 +40,3 @@ PESQUISAR LOGICA PRA MIRAR NOS ALVOS
 
 <img width="225" height="225" alt="grama" src="https://github.com/user-attachments/assets/4b973955-2497-43cb-bfa3-b9d3996b4857" />
 
-
-gcc jogo/main.c includes/torres.c Menu/menu/menu.c -I includes -I Menu/menu -o main -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
