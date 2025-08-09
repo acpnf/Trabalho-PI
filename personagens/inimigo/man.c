@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <stdio.h>
 #include "inimigos.h"
 
 #define SCREEN_WIDTH 800
@@ -9,7 +10,7 @@ int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Testando Inimigo");
     int visitados[10][16] = {0};  // Inicializa todos como 0 (não visitados)
     // Carrega o sprite do inimigo
-    Texture2D inimigoSprite = LoadTexture("zombie.png"); // Certifique-se de que o caminho do sprite está correto
+    Texture2D inimigoSprite = LoadTexture("personagens/inimigo/zombie.png"); // Certifique-se de que o caminho do sprite está correto
     if (inimigoSprite.width == 0 || inimigoSprite.height == 0) {
         // Se a textura não carregar corretamente, exibe uma mensagem de erro
         printf("Erro ao carregar o sprite do inimigo!\n");
