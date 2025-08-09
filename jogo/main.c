@@ -214,8 +214,6 @@ int main(void) {
                 DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
             }
         }
-        //Desenhar o inimigo
-        DesenharInimigoComSprite(inimigo, inimigoSprite, sourceRec);
 
         if (currentTime - lastMoveTime >= moveInterval) {
             MovimentarInimigo(&inimigo, mapa, visitados);
