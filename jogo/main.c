@@ -426,6 +426,12 @@ int main(void) {
             DrawText("para o mapa", 1310, altura - 350, 15, LIGHTGRAY);
         }
 
+        // Faz a instrução ficar piscando a cada 1 seg
+        if (fmod(GetTime(), 2.0) < 1.0) {
+            DrawText("Arraste as torres", 1285, altura - 370, 15, LIGHTGRAY);
+            DrawText("para o mapa", 1310, altura - 350, 15, LIGHTGRAY);
+        }
+
         // Mostrar moedas
         Rectangle sourceMoeda = {0, 0, imagem_moeda.width, imagem_moeda.height};
         Rectangle destMoeda = {20, 20, 32, 32}; 
