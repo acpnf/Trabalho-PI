@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "torres.h"
 #include "menu.h"
+#include "inimigos.h"
 
 #define TILE_SIZE 64
 #define LINHAS_MAPA 10
@@ -49,11 +50,29 @@ int main(void) {
 
     IniciarMenu(); // Inicia o menu antes do jogo
 
+    // Variável para controlar o tempo de movimentação
+    double lastMoveTime = 0.0;
+    double moveInterval = 0.9; // Intervalo de movimento em segundos
+
+    int visitados[LINHAS_MAPA][COLUNAS_MAPA] = {0};  // Inicializa todos como 0 (não visitados)
+
     const int largura = TILE_SIZE * COLUNAS_MAPA + 150;  // Inclui espaço para menu lateral
     const int altura = TILE_SIZE * LINHAS_MAPA;
 
     InitWindow(largura, altura, "Jogo de Torres");
     SetTargetFPS(60);
+
+    // Carrega o sprite do inimigo
+    Texture2D inimigoSprite = LoadTexture("personagens/Inimigos/zombie.png");
+
+    if (inimigoSprite.width == 0 || inimigoSprite.height == 0) {
+        // Se a textura não carregar corretamente, exibe uma mensagem de erro
+        printf("Erro ao carregar o sprite do inimigo!\n");
+        return -1;
+    }
+
+    // Define o sourceRec para a textura inteira
+    Rectangle sourceRec = { 0.0f, 0.0f, (float)inimigoSprite.width, (float)inimigoSprite.height };
 
     // Carregar texturas do mapa
     Texture2D grama_textura = LoadTexture("jogo/imagens/grama.png");
@@ -93,6 +112,12 @@ int main(void) {
         {1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     };
 
+    // Cria o inimigo
+    Inimigo inimigo = CriarInimigo(100, 1, inimigoSprite);
+    // Define a posição inicial do inimigo para o primeiro '1' da esquerda
+    inimigo.posX = 9;
+    inimigo.posY = 0;
+
     // Sistema de torres
     Soldado soldados[MAX_TORRES];
     Arqueiro arqueiros[MAX_TORRES];
@@ -118,6 +143,9 @@ int main(void) {
     int menuX = largura - menuWidth;
 
     while (!WindowShouldClose()) {
+        // Obtém o tempo atual
+        double currentTime = GetTime();
+
         Vector2 mousePos = GetMousePosition();
         int tileX = mousePos.x / TILE_SIZE;
         int tileY = mousePos.y / TILE_SIZE;
@@ -186,6 +214,19 @@ int main(void) {
                 DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
             }
         }
+        //Desenhar o inimigo
+        DesenharInimigoComSprite(inimigo, inimigoSprite, sourceRec);
+
+        if (currentTime - lastMoveTime >= moveInterval) {
+            MovimentarInimigo(&inimigo, mapa, visitados);
+            lastMoveTime = currentTime;
+        }
+
+         // Desenha o inimigo (escala para 64x64)
+        Vector2 position = { inimigo.posY * 64.0f, inimigo.posX * 64.0f };
+        Vector2 scale = { 64.0f / inimigoSprite.width, 64.0f / inimigoSprite.height };
+        // Ajusta o desenho da textura para a célula do mapa
+        DrawTexturePro(inimigoSprite, sourceRec, (Rectangle){position.x, position.y, 64.0f, 64.0f}, (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
 
         // Desenhar tile azul/vermelho no cursor
         if (tileX >= 0 && tileX < COLUNAS_MAPA && tileY >= 0 && tileY < LINHAS_MAPA) {

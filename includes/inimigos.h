@@ -2,7 +2,7 @@
 #ifndef inimigos_H
 #define inimigos_H
 #define MAPA_LINHAS 10
-#define MAPA_COLUNAS 16
+#define MAPA_COLUNAS 20
 typedef struct {
     int vida;
     int velocidade;

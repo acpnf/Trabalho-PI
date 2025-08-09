@@ -1,8 +1,6 @@
 #include <raylib.h>
 #include "inimigos.h"
 #include <stdbool.h>
-#define MAPA_LINHAS 10
-#define MAPA_COLUNAS 16
 
 Inimigo CriarInimigo(int life, int speed, Texture2D sprite) {
     return (Inimigo){
