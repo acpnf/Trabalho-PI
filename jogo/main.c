@@ -214,7 +214,7 @@ int main(void) {
                 DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
             }
         }
-
+        // Movimentação do inimigo
         if (currentTime - lastMoveTime >= moveInterval) {
             MovimentarInimigo(&inimigo, mapa, visitados);
             lastMoveTime = currentTime;
