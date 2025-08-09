@@ -288,9 +288,6 @@ int main(void) {
                         (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
         }
 
-
-         
-
         // Desenhar tile azul/vermelho no cursor
         if (tileX >= 0 && tileX < COLUNAS_MAPA && tileY >= 0 && tileY < LINHAS_MAPA) {
             Color cor_cursor = (mapa[tileY][tileX] == 0) ? (Color){0, 0, 255, 100} : (Color){255, 0, 0, 100};
@@ -415,6 +412,12 @@ int main(void) {
         if(telaAtual != CONFIGURACOES) {
             Rectangle sourceRecIcon = { 0, 0, (float)icon.width, (float)icon.height };
             DrawTexturePro(icon, sourceRecIcon, botaoConfiguracao, origin, 0.0f, WHITE);
+        }
+
+        // Faz a instrução ficar piscando a cada 1 seg
+        if (fmod(GetTime(), 2.0) < 1.0) {
+            DrawText("Arraste as torres", 1285, altura - 370, 15, LIGHTGRAY);
+            DrawText("para o mapa", 1310, altura - 350, 15, LIGHTGRAY);
         }
 
         // Faz a instrução ficar piscando a cada 1 seg
