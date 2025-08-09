@@ -63,10 +63,10 @@ int main(void) {
     Texture2D sprite_soldado = LoadTexture("jogo/imagens/torre_geral.png");
     Texture2D coracacao_vida = LoadTexture("jogo/imagens/coracao_vida.png");
     Texture2D imagem_moeda = LoadTexture("jogo/imagens/moeda.png");
-    Texture2D icon = LoadTexture("Menu/menu/imagens/configuracao.png");
-    Texture2D pergaminho = LoadTexture("Menu/menu/imagens/pergaminho.png");
+    Texture2D icon = LoadTexture("Menu/imagens/configuracao.png");
+    Texture2D pergaminho = LoadTexture("Menu/imagens/pergaminho.png");
 
-    Music musica = LoadMusicStream("Menu/menu/Som/menu.wav");
+    Music musica = LoadMusicStream("Menu/Som/menu.wav");
 
     // Botões das configurações 
     Rectangle botaoConfiguracao = {largura - 95, 600, 40, 40};
