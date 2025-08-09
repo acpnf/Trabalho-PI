@@ -8,9 +8,12 @@ typedef enum {
     CONFIGURACOES
 } EstadoTela;
 
-void IniciarMenu() {
+
+int IniciarMenu() {
     int largura = 800; 
     int altura = 600;
+    int saiu = 0;
+    int clicou_x = 0;
 
     InitWindow(largura, altura, "Menu");
     SetTargetFPS(60);
@@ -59,9 +62,12 @@ void IniciarMenu() {
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             if (telaAtual == MENU_PRINCIPAL) {
                 if (CheckCollisionPointRec(mouse, botaoIniciar)) {
+                    clicou_x = 1;
                     break; //sair do menu
                 }
                 if (CheckCollisionPointRec(mouse, botaoSair)) {
+                    saiu = 1;
+                    clicou_x = 1;
                     break; 
                 }
                 if (CheckCollisionPointRec(mouse, botaoConfiguracao)) {
@@ -155,10 +161,19 @@ void IniciarMenu() {
         }
 
         EndDrawing();
-    }
+    }   
 
     UnloadTexture(background);
     UnloadTexture(icon);
     UnloadTexture(pergaminho);
     CloseWindow();
+    if(clicou_x == 1){
+        if(saiu){
+            return 1;
+        } else {
+            return 0;
+        }
+    } else {
+        return 1;
+    }
 }

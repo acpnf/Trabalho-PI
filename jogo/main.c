@@ -48,7 +48,13 @@ bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arq
 
 int main(void) {
 
-    IniciarMenu(); // Inicia o menu antes do jogo
+    int continua;
+
+    continua = IniciarMenu();
+
+      if (continua == 1) {
+            return 0;
+        }
 
     // Variável para controlar o tempo de movimentação
     double lastMoveTime = 0.0;
@@ -143,6 +149,7 @@ int main(void) {
     int menuX = largura - menuWidth;
 
     while (!WindowShouldClose()) {
+
         // Obtém o tempo atual
         double currentTime = GetTime();
 
