@@ -69,7 +69,7 @@ int main(void) {
     Music musica = LoadMusicStream("Menu/menu/Som/menu.wav");
 
     // Botões das configurações 
-    Rectangle botaoConfiguracao = {largura - 60, 20, 40, 40};
+    Rectangle botaoConfiguracao = {largura - 95, 600, 40, 40};
     Rectangle botaoVoltar = {largura/2 + 90, 450, 75, 40};
     Rectangle desligarSom = {largura/2 - 160, 180, 115, 40};
     Rectangle telacheia = {largura/2 - 160, 230, 190, 40};
@@ -130,7 +130,7 @@ int main(void) {
         // Clique no menu lateral
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             if (mousePos.x > menuX) {
-                int buttonIndex = (mousePos.y - 40) / altura_botao;
+                int buttonIndex = (mousePos.y - 90) / altura_botao;
                 if (buttonIndex >= 0 && buttonIndex < TORRE_TOTAL && moedas >= custos[buttonIndex]) {
                     arrastando = true;
                     torre_arrastada = buttonIndex;
@@ -207,10 +207,12 @@ int main(void) {
 
         // Desenhar menu lateral
         DrawRectangle(menuX, 0, menuWidth, altura, (Color){50, 50, 50, 200});
-        DrawText("LOJA DE TORRES", menuX + 10, 10, 20, RAYWHITE);
+        DrawText("LOJA", menuX + 50, 10, 20, RAYWHITE);
+        DrawText("DE", menuX + 60, 30, 20, RAYWHITE);
+        DrawText("TORRES", menuX + 30, 50, 20, RAYWHITE);
 
         for (int i = 0; i < TORRE_TOTAL; i++) {
-            int yPos = 40 + i * altura_botao;
+            int yPos = 90 + i * altura_botao;
             bool podeComprar = (moedas >= custos[i]);
             Color cor = podeComprar ? RAYWHITE : GRAY;
 
