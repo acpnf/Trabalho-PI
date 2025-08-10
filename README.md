@@ -15,7 +15,7 @@ para adicionar:
 -------------
 sprite castelo
 sprite zumbi se movendo
-
+sorite tiro
 
 #primeira fase:    
   - som
