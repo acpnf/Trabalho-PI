@@ -4,10 +4,10 @@ TOWER DEFENSE
 
 para adicionar: 
 
-- musica durante o jogo
+- musica durante o jogo(jogo)
 - sons de ataque
-- horda (jp)
-- adicionar outro zumbi na fase2
+- horda (pablo)
+- adicionar outro zumbi na fase2(euzinho)
 - tela final créditos
 -------------
 sprite castelo
