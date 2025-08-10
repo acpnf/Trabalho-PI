@@ -4,6 +4,7 @@
 #include "menu.h"
 #include "inimigos.h"
 #include <raymath.h>
+#include "nivel_2.h"
 
 
 #define TILE_SIZE 64
@@ -50,6 +51,9 @@ bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arq
 
 int main(void) {
 
+    int fase_atual = 1;
+    Nivel2 nivel2 = {0};
+
     int continua;
 
     continua = IniciarMenu();
@@ -92,6 +96,8 @@ int main(void) {
     Texture2D imagem_moeda = LoadTexture("jogo/imagens/moeda.png");
     Texture2D icon = LoadTexture("Menu/imagens/configuracao.png");
     Texture2D pergaminho = LoadTexture("Menu/imagens/pergaminho.png");
+    Texture2D caminho_brick = LoadTexture("jogo/imagens/caminho_brick.png");
+    Texture2D textura_grama_n = LoadTexture("jogo/imagens/reck.png");
 
     Music musica = LoadMusicStream("Menu/Som/menu.wav");
 
@@ -211,6 +217,21 @@ int main(void) {
             }
         }
 
+        if (moedas ==0 && fase_atual == 1) {
+            fase_atual = 2;
+            nivel2 = IniciarNivel2();
+            
+            // Atualiza para a fase 2
+            memcpy(mapa, nivel2.mapa, sizeof(nivel2.mapa));
+            vida = nivel2.vida_jogador;
+            moedas = nivel2.moedas_iniciais;
+            
+            // Reinicia torres
+            num_soldados = 0;
+            num_arqueiros = 0;
+            num_magos = 0;
+        }
+
         // --- DESENHO ---
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -218,10 +239,17 @@ int main(void) {
         // Desenhar mapa
         for (int y = 0; y < LINHAS_MAPA; y++) {
             for (int x = 0; x < COLUNAS_MAPA; x++) {
-                Vector2 pos = {x * TILE_SIZE, y * TILE_SIZE};
-                Texture2D textura = (mapa[y][x] == 1) ? caminho_textura : grama_textura;
-                DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
-            }
+            Vector2 pos = {x * TILE_SIZE, y * TILE_SIZE};
+            Texture2D textura;
+            if (fase_atual == 1) {
+                textura = (mapa[y][x] == 1) ? caminho_textura : grama_textura;
+            } else {
+                textura = (mapa[y][x] == 1) ? caminho_brick : textura_grama_n;
+        }
+        
+        DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
+        DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
+    }
         }
         // Movimentação do inimigo
         if (currentTime - lastMoveTime >= moveInterval) {
@@ -481,6 +509,8 @@ int main(void) {
     UnloadTexture(pergaminho);
     UnloadTexture(coracacao_vida);
     UnloadTexture(imagem_moeda);
+    UnloadTexture(caminho_brick);
+    UnloadTexture(textura_grama_n);
 
     CloseWindow();
     return 0;
