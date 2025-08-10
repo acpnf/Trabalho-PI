@@ -10,7 +10,7 @@ para adicionar:
 - quando o zumbi chegar no final, perde vida(gabi)
 - quando o zumbi morrer solta ouro (clara)
 - adicionar outro zumbi na fase2
-- iniciar o zumbi na fase 2
+- iniciar o zumbi na fase 2 (euzinho)
 - tela final créditos
 -------------
 sprite castelo
