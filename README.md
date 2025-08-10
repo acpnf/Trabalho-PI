@@ -49,4 +49,5 @@ PESQUISAR LOGICA PRA MIRAR NOS ALVOS
 
 
 gcc jogo/main.c includes/nivel_2.c includes/inimigos.c includes/menu.c includes/torres.c -Iincludes -o jogo/jogo_exe -lraylib
+./jogo/jogo_exe
 
