@@ -54,6 +54,11 @@ int main(void) {
     int fase_atual = 1;
     Nivel2 nivel2 = {0};
 
+    // variaveis para mostrar a mensagem de dano 
+    double tempoMostrarDano = 0;
+    bool mostrarDano = false;
+    Vector2 posDano;
+
     int continua;
 
     continua = IniciarMenu();
@@ -118,7 +123,7 @@ int main(void) {
         {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
         {0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
         {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
@@ -251,12 +256,28 @@ int main(void) {
         DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
     }
         }
+        
         // Movimentação do inimigo
         if (currentTime - lastMoveTime >= moveInterval) {
             MovimentarInimigo(&inimigo, mapa, visitados);
             lastMoveTime = currentTime;
-        }
 
+            // Verifica se o zumbi chegou na posição final 
+            if (inimigo.posX == 4 && inimigo.posY == 17) {
+                vida -= 50; // tira vida do castelo
+                if (vida < 0) {
+                    vida = 0;
+                }
+
+                mostrarDano = true;
+                tempoMostrarDano = GetTime();
+                posDano = (Vector2){ inimigo.posY * TILE_SIZE + TILE_SIZE/2, inimigo.posX * TILE_SIZE };
+
+                // Desaparece com o zumbi
+                 inimigo.morto = true;
+                
+            }
+        }
 
         double agora = GetTime();
         Vector2 inimigo_pos = { inimigo.posX * TILE_SIZE + TILE_SIZE / 2, inimigo.posY * TILE_SIZE + TILE_SIZE / 2 };
@@ -328,8 +349,6 @@ int main(void) {
         }
 
 
-
-
         if (!inimigo.morto) {
             Vector2 position = { inimigo.posY * 64.0f, inimigo.posX * 64.0f };
             Vector2 scale = { 64.0f / inimigoSprite.width, 64.0f / inimigoSprite.height };
@@ -337,8 +356,6 @@ int main(void) {
                         (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
         }
 
-
-         
 
         // Desenhar tile azul/vermelho no cursor
         if (tileX >= 0 && tileX < COLUNAS_MAPA && tileY >= 0 && tileY < LINHAS_MAPA) {
@@ -466,6 +483,12 @@ int main(void) {
             DrawTexturePro(icon, sourceRecIcon, botaoConfiguracao, origin, 0.0f, WHITE);
         }
 
+        // Fica com as instruções piscando
+        if (fmod(GetTime(), 2.0) < 1.0) {
+            DrawText("Arraste as torres", 1285, altura - 370, 15, LIGHTGRAY);
+            DrawText("para o mapa", 1310, altura - 350, 15, LIGHTGRAY);
+        }
+
         // Mostrar moedas
         Rectangle sourceMoeda = {0, 0, imagem_moeda.width, imagem_moeda.height};
         Rectangle destMoeda = {20, 20, 32, 32}; 
@@ -509,7 +532,16 @@ int main(void) {
 
         // Desenha texto principal em vermelho
         DrawText(textoVida, xVida, yVida, fontSize, RED);
-        
+
+        // Desenha a mensagem de dano por um tempinho
+        if (mostrarDano) {
+            if (GetTime() - tempoMostrarDano < 0.7) {
+                DrawText("-50 HP", posDano.x, posDano.y, 20, RED);
+            } else {
+                mostrarDano = false;
+            }
+        }
+
         EndDrawing();
     }
 
