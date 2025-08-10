@@ -25,28 +25,32 @@ bool PodeSeMover(int mapa[MAPA_LINHAS][MAPA_COLUNAS], int visitados[MAPA_LINHAS]
 
 // Função para mover o inimigo, agora com controle de visitação
 void MovimentarInimigo(Inimigo *inimigo, int mapa[MAPA_LINHAS][MAPA_COLUNAS], int visitados[MAPA_LINHAS][MAPA_COLUNAS]) {
-
     int dx = inimigo->posX;
     int dy = inimigo->posY;
 
-    // Marca a célula atual como visitada
-    visitados[dx][dy] = 1;
+    // Aumenta o contador da célula atual
+    visitados[dx][dy]++;
 
-    // Tentativa de mover para baixo (direção preferencial)
-    if (PodeSeMover(mapa, visitados, dx + 1, dy)) {
-        inimigo->posX += 1; // Move para baixo
+    // Verifica direções possíveis
+    bool pode[4] = {
+        PodeSeMover(mapa, visitados, dx, dy + 1), // Direita
+        PodeSeMover(mapa, visitados, dx - 1, dy), // Cima
+        PodeSeMover(mapa, visitados, dx + 1, dy), // Baixo
+        PodeSeMover(mapa, visitados, dx, dy - 1)  // Esquerda
+    };
+
+    // Movimento prioritário para fase 2
+    if (pode[0]) {
+        inimigo->posY += 1; // Direita
+    } 
+    else if (pode[1]) {
+        inimigo->posX -= 1; // Cima
     }
-    // Caso não consiga para baixo, tenta para a direita
-    else if (PodeSeMover(mapa, visitados, dx, dy + 1)) {
-        inimigo->posY += 1; // Move para a direita
+    else if (pode[2]) {
+        inimigo->posX += 1; // Baixo
     }
-    // Caso não consiga para baixo nem para a direita, tenta para a esquerda
-    else if (PodeSeMover(mapa, visitados, dx, dy - 1)) {
-        inimigo->posY -= 1; // Move para a esquerda
-    }
-    // Caso não consiga para baixo, direita nem esquerda, tenta para cima
-    else if (PodeSeMover(mapa, visitados, dx - 1, dy)) {
-        inimigo->posX -= 1; // Move para cima
+    else if (pode[3]) {
+        inimigo->posY -= 1; // Esquerda
     }
 }
 
