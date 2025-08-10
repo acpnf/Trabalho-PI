@@ -4,9 +4,13 @@ TOWER DEFENSE
 
 para adicionar: 
 
-- menu
-- som
-- musica
+-musica durante o jogo
+- sons de ataque
+- horda
+- quando o zumbi chegar no final, perde vida
+- quando o zumbi morrer solta ouro
+- adicionar outro zumbi na fase2
+- iniciar o zumbi na fase 2
 
 #primeira fase:    
   - som
