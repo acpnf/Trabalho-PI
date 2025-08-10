@@ -4,7 +4,7 @@ TOWER DEFENSE
 
 para adicionar: 
 
-- musica durante o jogo(jogo)
+- musica durante o jogo(jp)
 - sons de ataque
 - horda (pablo)
 - adicionar outro zumbi na fase2(euzinho)
