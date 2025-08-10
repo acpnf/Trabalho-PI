@@ -6,11 +6,16 @@ para adicionar:
 
 -musica durante o jogo
 - sons de ataque
-- horda
-- quando o zumbi chegar no final, perde vida
-- quando o zumbi morrer solta ouro
+- horda (jp)
+- quando o zumbi chegar no final, perde vida(gabi)
+- quando o zumbi morrer solta ouro (clara)
 - adicionar outro zumbi na fase2
 - iniciar o zumbi na fase 2
+- tela final créditos
+-------------
+sprite castelo
+sprite zumbi se movendo
+
 
 #primeira fase:    
   - som
