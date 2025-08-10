@@ -263,8 +263,12 @@ int main(void) {
             lastMoveTime = currentTime;
 
             // Verifica se o zumbi chegou na posição final 
-            if (inimigo.posX == 4 && inimigo.posY == 17) {
+            if (inimigo.posX == 4 && inimigo.posY == 17 && inimigo.morto == false) {
                 vida -= 50; // tira vida do castelo
+                
+                // Desaparece com o zumbi
+                inimigo.morto = true;
+
                 if (vida < 0) {
                     vida = 0;
                 }
@@ -272,9 +276,6 @@ int main(void) {
                 mostrarDano = true;
                 tempoMostrarDano = GetTime();
                 posDano = (Vector2){ inimigo.posY * TILE_SIZE + TILE_SIZE/2, inimigo.posX * TILE_SIZE };
-
-                // Desaparece com o zumbi
-                 inimigo.morto = true;
                 
             }
         }
@@ -509,7 +510,6 @@ int main(void) {
 
         // Texto principal em dourado
         DrawText(textoMoedas, xMoedas, yMoedas, fontSizeMoedas, GOLD);
-        DrawText("Arraste torres para o mapa", 20, altura - 30, 20, LIGHTGRAY);
 
         // Mostrar coracao 
         Rectangle sourceRec = {0, 0, coracacao_vida.width, coracacao_vida.height};
