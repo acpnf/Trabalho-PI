@@ -9,6 +9,7 @@ Inimigo CriarInimigo(int life, int speed, Texture2D sprite) {
         .sprite     = sprite,
         .posX       = 0,
         .posY       = 0,
+        .morto      = false,
     };
 }
 

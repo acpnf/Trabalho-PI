@@ -217,7 +217,7 @@ int main(void) {
             }
         }
 
-        if (moedas ==0 && fase_atual == 1) {
+        if (moedas == 0 && fase_atual == 1) {
             fase_atual = 2;
             nivel2 = IniciarNivel2();
             
@@ -265,9 +265,14 @@ int main(void) {
         for (int i = 0; i < num_soldados; i++) {
             if (!soldados[i].ativo) continue;
             float dist = Vector2Distance(soldados[i].posicao, inimigo_pos);
-            if (dist <= soldados[i].alcance) {
+            if (!inimigo.morto && dist <= soldados[i].alcance) {
                 if (agora - soldados[i].tempoUltimoTiro >= soldados[i].cooldown) {
                     inimigo.vida -= soldados[i].dano;
+                    if (inimigo.vida <= 0 && !inimigo.morto){
+                        moedas += 3;
+
+                        inimigo.morto = true; 
+                    }
                     soldados[i].tempoUltimoTiro = agora;
                     soldados[i].tempoFimTiro = agora + 0.1;
                     printf("Soldado %d atirou! Vida inimigo: %d\n", i, inimigo.vida);
@@ -282,9 +287,14 @@ int main(void) {
         for (int i = 0; i < num_arqueiros; i++) {
             if (!arqueiros[i].ativo) continue;
             float dist = Vector2Distance(arqueiros[i].posicao, inimigo_pos);
-            if (dist <= arqueiros[i].alcance) {
+            if (!inimigo.morto && dist <= soldados[i].alcance) {
                 if (agora - arqueiros[i].tempoUltimoTiro >= arqueiros[i].cooldown) {
                     inimigo.vida -= arqueiros[i].dano;
+                    if (inimigo.vida <= 0 && !inimigo.morto){
+                        moedas += 3;
+
+                        inimigo.morto = true; 
+                    }
                     arqueiros[i].tempoUltimoTiro = agora;
                     arqueiros[i].tempoFimTiro = agora + 0.1;
                     printf("Arqueiro %d atirou! Vida inimigo: %d\n", i, inimigo.vida);
@@ -299,9 +309,14 @@ int main(void) {
         for (int i = 0; i < num_magos; i++) {
             if (!magos[i].ativo) continue;
             float dist = Vector2Distance(magos[i].posicao, inimigo_pos);
-            if (dist <= magos[i].alcance) {
+            if (!inimigo.morto && dist <= soldados[i].alcance) {
                 if (agora - magos[i].tempoUltimoTiro >= magos[i].cooldown) {
                     inimigo.vida -= magos[i].dano;
+                    if (inimigo.vida <= 0 && !inimigo.morto){
+                        moedas += 3;
+
+                        inimigo.morto = true; 
+                    }
                     magos[i].tempoUltimoTiro = agora;
                     magos[i].tempoFimTiro = agora + 0.1;
                     printf("Mago %d atirou! Vida inimigo: %d\n", i, inimigo.vida);
@@ -315,7 +330,7 @@ int main(void) {
 
 
 
-        if (inimigo.vida > 0) {
+        if (!inimigo.morto) {
             Vector2 position = { inimigo.posY * 64.0f, inimigo.posX * 64.0f };
             Vector2 scale = { 64.0f / inimigoSprite.width, 64.0f / inimigoSprite.height };
             DrawTexturePro(inimigoSprite, sourceRec, (Rectangle){position.x, position.y, 64.0f, 64.0f},

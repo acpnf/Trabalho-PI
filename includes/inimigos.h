@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <stdbool.h> 
 #ifndef inimigos_H
 #define inimigos_H
 #define MAPA_LINHAS 10
@@ -9,6 +10,7 @@ typedef struct {
     Texture2D sprite; // imagem
     int posX; // posicao
     int posY;
+    bool morto; 
 } Inimigo;
 
 Inimigo CriarInimigo(int life, int speed, Texture2D sprite);
