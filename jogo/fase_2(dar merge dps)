@@ -13,7 +13,7 @@
 typedef enum {
     TORRE_SOLDADO = 0,
     TORRE_ARQUEIRO,
-    
+
     TORRE_MAGO,
     TORRE_TOTAL
 } TipoTorre;
@@ -70,6 +70,10 @@ int main(void) {
     Texture2D imagem_moeda = LoadTexture("jogo/imagens/moeda.png");
     Texture2D icon = LoadTexture("Menu/imagens/configuracao.png");
     Texture2D pergaminho = LoadTexture("Menu/imagens/pergaminho.png");
+    Texture2D caminho_brick = LoadTexture("jogo/imagens/caminho_brick.png");
+    Texture2D textura_grama_n = LoadTexture("jogo/imagens/reck.png");
+
+    
 
     Music musica = LoadMusicStream("Menu/Som/menu.wav");
 
@@ -205,15 +209,22 @@ int main(void) {
         for (int y = 0; y < LINHAS_MAPA; y++) {
             for (int x = 0; x < COLUNAS_MAPA; x++) {
             Vector2 pos = {x * TILE_SIZE, y * TILE_SIZE};
-            Texture2D textura = (fase_atual == 1)
-            ? ((mapa[y][x] == 1) ? caminho_textura : grama_textura)
-            : ((mapa[y][x] == 1) ? nivel2.textura_caminho : nivel2.textura_grama);
+            Texture2D textura;
+            if (fase_atual == 1) {
+                textura = (mapa[y][x] == 1) ? caminho_textura : grama_textura;
+            } else {
+                textura = (mapa[y][x] == 1) ? caminho_brick : textura_grama_n;
+        }
         
+        DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
         DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
     }
         }
 
         // Desenhar tile azul/vermelho no cursor
+
+        DrawText(TextFormat("Fase atual: %d", fase_atual), 20, 100, 20, BLACK);
+
         if (tileX >= 0 && tileX < COLUNAS_MAPA && tileY >= 0 && tileY < LINHAS_MAPA) {
             Color cor_cursor = (mapa[tileY][tileX] == 0) ? (Color){0, 0, 255, 100} : (Color){255, 0, 0, 100};
             DrawRectangle(tileX * TILE_SIZE, tileY * TILE_SIZE, TILE_SIZE, TILE_SIZE, cor_cursor);
@@ -397,8 +408,8 @@ int main(void) {
     UnloadTexture(pergaminho);
     UnloadTexture(coracacao_vida);
     UnloadTexture(imagem_moeda);
-    UnloadTexture(nivel2.textura_caminho);
-    UnloadTexture(nivel2.textura_grama);
+    UnloadTexture(caminho_brick);
+    UnloadTexture(textura_grama_n);
 
     CloseWindow();
     return 0;
