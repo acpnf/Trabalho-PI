@@ -55,7 +55,7 @@ double moveInterval = 0.9; // Intervalo de movimento em segundos
 bool mostrarDano = false;
 
 // Sistema de vida 
-int vida = 250; 
+int vida = 150; 
 
 // Define o sourceRec para a textura inteira
 Rectangle sourceRec;
@@ -63,7 +63,7 @@ Rectangle sourceRec;
 // variaveis para mostrar a mensagem de dano 
     double tempoMostrarDano = 0;
 
-    int moedas = 200;
+    int moedas = 100;
 
 
 bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arqueiro* arqueiros, int num_arqueiros, Mago* magos, int num_magos) {
@@ -375,7 +375,7 @@ int main(void) {
             num_magos = 0;
 
             for (int i = 0; i < sizeof(inimigos)/sizeof(Inimigo); i++) {
-                inimigos[i] = CriarInimigo(100, 1, inimigoSprite);
+                inimigos[i] = CriarInimigo(300, 1.5, inimigoSprite);
                 inimigos[i].posX = 9; // Posição inicial da fase 2 (ajuste conforme necessário)
                 inimigos[i].posY = 0;
             }
@@ -410,11 +410,7 @@ int main(void) {
         if (move)
         {
             lastMoveTime = currentTime;
-
-            if (curr_index<(sizeof(inimigos)/sizeof(Inimigo))){
-                curr_index = (curr_index + 1);
-            }
-            
+            curr_index = (curr_index + 1) % (sizeof(inimigos)/sizeof(Inimigo));
             //printf("curr index: %d\n", curr_index);
         }
 
