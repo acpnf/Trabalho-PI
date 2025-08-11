@@ -223,6 +223,12 @@ int foo(double currentTime, Inimigo *inimigo, int index, int curr_index)
     return res;
 }
 
+typedef struct {
+    Sound fase1;
+    Sound fase2;
+    bool carregado;
+} GerenciadorSons;
+
 int main(void) {
 
     int fase_atual = 1;
@@ -243,6 +249,11 @@ int main(void) {
 
     InitWindow(largura, altura, "Jogo de Torres");
     SetTargetFPS(60);
+
+    GerenciadorSons sons = {0};
+    sons.fase1 = LoadSound("jogo/som/Loop_The_Old_Tower_Inn.wav");
+    sons.fase2 = LoadSound("jogo/som/Juhani Junkala - Epic Boss Battle [Seamlessly Looping].wav");
+    sons.carregado = true;
 
     
     // MUDANÇA: Carrega a imagem para a tela inicial com o caminho fornecido.
@@ -298,14 +309,6 @@ int main(void) {
         inimigos[i].posX = 9;
         inimigos[i].posY = 0;
     }
-    Inimigo inimigos[10];
-    for (int i = 0; i < sizeof(inimigos)/sizeof(Inimigo); i++)
-    {
-        inimigos[i] = CriarInimigo(100, 1, inimigoSprite);
-        // Define a posição inicial do inimigo para o primeiro '1' da esquerda
-        inimigos[i].posX = 9;
-        inimigos[i].posY = 0;
-    }
 
     // Sistema de torres
     
@@ -313,7 +316,6 @@ int main(void) {
     int custos[TORRE_TOTAL] = {CUSTO_SOLDADO, CUSTO_ARQUEIRO, CUSTO_MAGO};
     const char* nomes_torres[TORRE_TOTAL] = {"Soldado", "Arqueiro", "Mago"};
 
-    int curr_index = 0;
     int curr_index = 0;
 
     // Controle de torres
@@ -422,6 +424,14 @@ int main(void) {
                     indiceStartImagem = 1;
                     estadoJogo = StartScreen;
                     nivel2 = IniciarNivel2();
+
+                    if (fase_atual == 2) {
+                        if (IsSoundPlaying(sons.fase1)) StopSound(sons.fase1);
+                        if (!IsSoundPlaying(sons.fase2)) PlaySound(sons.fase2);
+                    } else {
+                        if (IsSoundPlaying(sons.fase2)) StopSound(sons.fase2);
+                        if (!IsSoundPlaying(sons.fase1)) PlaySound(sons.fase1);
+                    }
                     
                     // Atualiza para a fase 2
                     memcpy(mapa, nivel2.mapa, sizeof(nivel2.mapa));
@@ -707,6 +717,8 @@ int main(void) {
     UnloadTexture(caminho_brick);
     UnloadTexture(textura_grama_n);
     DeInitGameOver();
+    UnloadSound(sons.fase1);
+    UnloadSound(sons.fase2);
 
     CloseWindow();
     return 0;
