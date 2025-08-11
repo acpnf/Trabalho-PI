@@ -29,7 +29,7 @@ void MovimentarInimigo(Inimigo *inimigo, int mapa[MAPA_LINHAS][MAPA_COLUNAS], in
     int dy = inimigo->posY;
 
     // Aumenta o contador da célula atual
-    visitados[dx][dy]++;
+    //visitados[dx][dy]++;
 
     // Verifica direções possíveis
     bool pode[4] = {
