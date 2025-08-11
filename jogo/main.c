@@ -235,6 +235,9 @@ int main(void) {
     if (continua == 1)
         return 0;
     
+    if (continua == 1)
+        return 0;
+    
     const int largura = TILE_SIZE * COLUNAS_MAPA + 150;  // Inclui espaço para menu lateral
     const int altura = TILE_SIZE * LINHAS_MAPA;
 
@@ -295,6 +298,14 @@ int main(void) {
         inimigos[i].posX = 9;
         inimigos[i].posY = 0;
     }
+    Inimigo inimigos[10];
+    for (int i = 0; i < sizeof(inimigos)/sizeof(Inimigo); i++)
+    {
+        inimigos[i] = CriarInimigo(100, 1, inimigoSprite);
+        // Define a posição inicial do inimigo para o primeiro '1' da esquerda
+        inimigos[i].posX = 9;
+        inimigos[i].posY = 0;
+    }
 
     // Sistema de torres
     
@@ -302,6 +313,7 @@ int main(void) {
     int custos[TORRE_TOTAL] = {CUSTO_SOLDADO, CUSTO_ARQUEIRO, CUSTO_MAGO};
     const char* nomes_torres[TORRE_TOTAL] = {"Soldado", "Arqueiro", "Mago"};
 
+    int curr_index = 0;
     int curr_index = 0;
 
     // Controle de torres
@@ -313,6 +325,15 @@ int main(void) {
     int menuX = largura - menuWidth;
 
     while (!WindowShouldClose()) {
+
+        // Controle de música
+        if (fase_atual == 1) {
+            if (IsSoundPlaying(sons.fase2)) StopSound(sons.fase2);
+            if (!IsSoundPlaying(sons.fase1)) PlaySound(sons.fase1);
+        } else {
+            if (IsSoundPlaying(sons.fase1)) StopSound(sons.fase1);
+            if (!IsSoundPlaying(sons.fase2)) PlaySound(sons.fase2);
+        }
 
         // Obtém o tempo atual
         double currentTime = GetTime();
