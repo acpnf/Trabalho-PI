@@ -91,6 +91,15 @@ bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arq
     return false;
 }
 
+bool todos_inimigos_mortos(Inimigo *inimigos, int total_inimigos) {
+    for (int i = 0; i < total_inimigos; i++) {
+        if (!inimigos[i].morto) {
+            return false;
+        }
+    }
+    return true;
+}
+
 int foo(double currentTime, Inimigo *inimigo, int index, int curr_index)
 {
     int res = 0;
@@ -351,7 +360,7 @@ int main(void) {
             }
         }
 
-        if (moedas == 0 && fase_atual == 1) {
+        if (fase_atual == 1 && todos_inimigos_mortos(inimigos, sizeof(inimigos)/sizeof(Inimigo))) {
             fase_atual = 2;
             nivel2 = IniciarNivel2();
             
@@ -364,7 +373,14 @@ int main(void) {
             num_soldados = 0;
             num_arqueiros = 0;
             num_magos = 0;
+
+            for (int i = 0; i < sizeof(inimigos)/sizeof(Inimigo); i++) {
+                inimigos[i] = CriarInimigo(100, 1, inimigoSprite);
+                inimigos[i].posX = 9; // Posição inicial da fase 2 (ajuste conforme necessário)
+                inimigos[i].posY = 0;
+            }
         }
+    
 
         // --- DESENHO ---
         BeginDrawing();
