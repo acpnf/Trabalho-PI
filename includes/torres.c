@@ -16,8 +16,8 @@ Soldado criar_soldado(Vector2 posicao, float alcance) {
     Soldado s;
     s.posicao = posicao;
     s.dano = 10;
-    s.alcance = alcance;
-    s.cooldown = 0.5f;
+    s.alcance = 10.0f;
+    s.cooldown = 1.0f;
     s.custo = CUSTO_SOLDADO;
     s.ativo = true;
     return s;

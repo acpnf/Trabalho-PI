@@ -24,6 +24,48 @@ typedef enum {
     CONFIGURACOES
 } EstadoTela;
 
+int mapa[LINHAS_MAPA][COLUNAS_MAPA] = {
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+int visitados[LINHAS_MAPA][COLUNAS_MAPA] = {0};  // Inicializa todos como 0 (não visitados)
+
+Soldado soldados[MAX_TORRES];
+Arqueiro arqueiros[MAX_TORRES];
+Mago magos[MAX_TORRES];
+int num_soldados = 0;
+int num_arqueiros = 0;
+int num_magos = 0;
+Texture2D inimigoSprite;
+
+Vector2 posDano;
+
+// Variável para controlar o tempo de movimentação
+double lastMoveTime = 0.0;
+double moveInterval = 0.9; // Intervalo de movimento em segundos
+
+bool mostrarDano = false;
+
+// Sistema de vida 
+int vida = 500; 
+
+// Define o sourceRec para a textura inteira
+Rectangle sourceRec;
+
+// variaveis para mostrar a mensagem de dano 
+    double tempoMostrarDano = 0;
+
+    int moedas = 100;
+
+
 bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arqueiro* arqueiros, int num_arqueiros, Mago* magos, int num_magos) {
     int centroX = x * TILE_SIZE + TILE_SIZE / 2;
     int centroY = y * TILE_SIZE + TILE_SIZE / 2;
@@ -49,30 +91,127 @@ bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arq
     return false;
 }
 
+int foo(double currentTime, Inimigo *inimigo, int index, int curr_index)
+{
+    int res = 0;
+     // Movimentação do inimigo
+    if (index <= curr_index && (currentTime - lastMoveTime) >= moveInterval) 
+    {
+        //printf("index: %d\n", index);
+        res = 1;
+        MovimentarInimigo(inimigo, mapa, visitados);
+        
+
+        // Verifica se o zumbi chegou na posição final 
+        if (inimigo->posX == 4 && inimigo->posY == 17 && inimigo->morto == false) {
+            vida -= 50; // tira vida do castelo
+            
+            // Desaparece com o zumbi
+            inimigo->morto = true;
+
+            if (vida < 0) {
+                vida = 0;
+            }
+
+            mostrarDano = true;
+            tempoMostrarDano = GetTime();
+            posDano = (Vector2){ inimigo->posY * TILE_SIZE + TILE_SIZE/2, inimigo->posX * TILE_SIZE };
+            
+        }
+    }
+
+    double agora = GetTime();
+    Vector2 inimigo_pos = { inimigo->posX * TILE_SIZE + TILE_SIZE / 2, inimigo->posY * TILE_SIZE + TILE_SIZE / 2 };
+
+    // Soldados
+    for (int i = 0; i < num_soldados; i++) {
+        if (!soldados[i].ativo) continue;
+        float dist = Vector2Distance(soldados[i].posicao, inimigo_pos);
+        if (!inimigo->morto && dist <= soldados[i].alcance) {
+            if (agora - soldados[i].tempoUltimoTiro >= soldados[i].cooldown) {
+                inimigo->vida -= soldados[i].dano;
+                if (inimigo->vida <= 0 && !inimigo->morto){
+                    moedas += 3;
+
+                    inimigo->morto = true; 
+                }
+                soldados[i].tempoUltimoTiro = agora;
+                soldados[i].tempoFimTiro = agora + 0.1;
+                printf("Soldado %d atirou! Vida inimigo: %d\n", i, inimigo->vida);
+            }
+            if (agora <= soldados[i].tempoFimTiro) {
+                DrawLineV(soldados[i].posicao, inimigo_pos, RED);
+            }
+        }
+    }
+
+    // Arqueiros
+    for (int i = 0; i < num_arqueiros; i++) {
+        if (!arqueiros[i].ativo) continue;
+        float dist = Vector2Distance(arqueiros[i].posicao, inimigo_pos);
+        if (!inimigo->morto && dist <= arqueiros[i].alcance) {
+            if (agora - arqueiros[i].tempoUltimoTiro >= arqueiros[i].cooldown) {
+                inimigo->vida -= arqueiros[i].dano;
+                if (inimigo->vida <= 0 && !inimigo->morto){
+                    moedas += 3;
+
+                    inimigo->morto = true; 
+                }
+                arqueiros[i].tempoUltimoTiro = agora;
+                arqueiros[i].tempoFimTiro = agora + 0.1;
+                printf("Arqueiro %d atirou! Vida inimigo: %d\n", i, inimigo->vida);
+            }
+            if (agora <= arqueiros[i].tempoFimTiro) {
+                DrawLineV(arqueiros[i].posicao, inimigo_pos, GREEN);
+            }
+        }
+    }
+
+    // Magos
+    for (int i = 0; i < num_magos; i++) {
+        if (!magos[i].ativo) continue;
+        float dist = Vector2Distance(magos[i].posicao, inimigo_pos);
+        if (!inimigo->morto && dist <= magos[i].alcance) {
+            if (agora - magos[i].tempoUltimoTiro >= magos[i].cooldown) {
+                inimigo->vida -= magos[i].dano;
+                if (inimigo->vida <= 0 && !inimigo->morto){
+                    moedas += 3;
+
+                    inimigo->morto = true; 
+                }
+                magos[i].tempoUltimoTiro = agora;
+                magos[i].tempoFimTiro = agora + 0.1;
+                printf("Mago %d atirou! Vida inimigo: %d\n", i, inimigo->vida);
+            }
+            if (agora <= magos[i].tempoFimTiro) {
+                DrawLineV(magos[i].posicao, inimigo_pos, BLUE);
+            }
+        }
+    }
+
+
+    if (!inimigo->morto) {
+        Vector2 position = { inimigo->posY * 64.0f, inimigo->posX * 64.0f };
+        Vector2 scale = { 64.0f / inimigoSprite.width, 64.0f / inimigoSprite.height };
+        DrawTexturePro(inimigoSprite, sourceRec, (Rectangle){position.x, position.y, 64.0f, 64.0f},
+                    (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
+    }
+
+    return res;
+}
+
 int main(void) {
 
     int fase_atual = 1;
     Nivel2 nivel2 = {0};
 
-    // variaveis para mostrar a mensagem de dano 
-    double tempoMostrarDano = 0;
-    bool mostrarDano = false;
-    Vector2 posDano;
-
     int continua;
 
     continua = IniciarMenu();
 
-      if (continua == 1) {
-            return 0;
-        }
-
-    // Variável para controlar o tempo de movimentação
-    double lastMoveTime = 0.0;
-    double moveInterval = 0.9; // Intervalo de movimento em segundos
-
-    int visitados[LINHAS_MAPA][COLUNAS_MAPA] = {0};  // Inicializa todos como 0 (não visitados)
-
+    if (continua == 1)
+        return 0;
+    
     const int largura = TILE_SIZE * COLUNAS_MAPA + 150;  // Inclui espaço para menu lateral
     const int altura = TILE_SIZE * LINHAS_MAPA;
 
@@ -80,16 +219,20 @@ int main(void) {
     SetTargetFPS(60);
 
     // Carrega o sprite do inimigo
-    Texture2D inimigoSprite = LoadTexture("personagens/Inimigos/zombie.png");
+    inimigoSprite = LoadTexture("personagens/Inimigos/zombie.png");
+    sourceRec = (Rectangle){ 0.0f, 0.0f, (float)inimigoSprite.width, (float)inimigoSprite.height };
 
-    if (inimigoSprite.width == 0 || inimigoSprite.height == 0) {
-        // Se a textura não carregar corretamente, exibe uma mensagem de erro
-        printf("Erro ao carregar o sprite do inimigo!\n");
-        return -1;
-    }
 
-    // Define o sourceRec para a textura inteira
-    Rectangle sourceRec = { 0.0f, 0.0f, (float)inimigoSprite.width, (float)inimigoSprite.height };
+    if (inimigoSprite.width == 0) {
+    printf("ERRO: Textura do zumbi não carregada! Caminho: %s\n", 
+           "personagens/Inimigos/zombie.png");
+    return -1;
+}
+
+    // Em foo(), antes do DrawTexturePro:
+    
+
+    
 
     // Carregar texturas do mapa
     Texture2D grama_textura = LoadTexture("jogo/imagens/grama.png");
@@ -118,40 +261,26 @@ int main(void) {
     // Inicializar torres (carrega os sprites internos)
     iniciar_torres();
 
-    int mapa[LINHAS_MAPA][COLUNAS_MAPA] = {
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-        {0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-        {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-        {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-        {1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    };
+    
 
     // Cria o inimigo
-    Inimigo inimigo = CriarInimigo(100, 1, inimigoSprite);
-    // Define a posição inicial do inimigo para o primeiro '1' da esquerda
-    inimigo.posX = 9;
-    inimigo.posY = 0;
+    Inimigo inimigos[10];
+    for (int i = 0; i < sizeof(inimigos)/sizeof(Inimigo); i++)
+    {
+        inimigos[i] = CriarInimigo(100, 1, inimigoSprite);
+        // Define a posição inicial do inimigo para o primeiro '1' da esquerda
+        inimigos[i].posX = 9;
+        inimigos[i].posY = 0;
+    }
 
     // Sistema de torres
-    Soldado soldados[MAX_TORRES];
-    Arqueiro arqueiros[MAX_TORRES];
-    Mago magos[MAX_TORRES];
-    int num_soldados = 0;
-    int num_arqueiros = 0;
-    int num_magos = 0;
+    
 
     // Sistema de recursos
-    int moedas = 100;
     int custos[TORRE_TOTAL] = {CUSTO_SOLDADO, CUSTO_ARQUEIRO, CUSTO_MAGO};
     const char* nomes_torres[TORRE_TOTAL] = {"Soldado", "Arqueiro", "Mago"};
 
-    // Sistema de vida 
-    int vida = 500; 
+    int curr_index = 0;
 
     // Controle de torres
     bool arrastando = false;
@@ -241,122 +370,33 @@ int main(void) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
+
         // Desenhar mapa
         for (int y = 0; y < LINHAS_MAPA; y++) {
             for (int x = 0; x < COLUNAS_MAPA; x++) {
             Vector2 pos = {x * TILE_SIZE, y * TILE_SIZE};
             Texture2D textura;
-            if (fase_atual == 1) {
+            if (fase_atual == 1)
                 textura = (mapa[y][x] == 1) ? caminho_textura : grama_textura;
-            } else {
+            else
                 textura = (mapa[y][x] == 1) ? caminho_brick : textura_grama_n;
-        }
         
-        DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
-        DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
-    }
+                DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
+                DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
+            }
         }
+    
+        int move = 0;
+        for(int i = 0; i < sizeof(inimigos)/sizeof(Inimigo); i++)
+            if (foo(currentTime, &inimigos[i], i, curr_index))
+                move = 1;
         
-        // Movimentação do inimigo
-        if (currentTime - lastMoveTime >= moveInterval) {
-            MovimentarInimigo(&inimigo, mapa, visitados);
+        if (move)
+        {
             lastMoveTime = currentTime;
-
-            // Verifica se o zumbi chegou na posição final 
-            if (inimigo.posX == 4 && inimigo.posY == 17 && inimigo.morto == false) {
-                vida -= 50; // tira vida do castelo
-                
-                // Desaparece com o zumbi
-                inimigo.morto = true;
-
-                if (vida < 0) {
-                    vida = 0;
-                }
-
-                mostrarDano = true;
-                tempoMostrarDano = GetTime();
-                posDano = (Vector2){ inimigo.posY * TILE_SIZE + TILE_SIZE/2, inimigo.posX * TILE_SIZE };
-                
-            }
+            curr_index = (curr_index + 1) % (sizeof(inimigos)/sizeof(Inimigo));
+            //printf("curr index: %d\n", curr_index);
         }
-
-        double agora = GetTime();
-        Vector2 inimigo_pos = { inimigo.posX * TILE_SIZE + TILE_SIZE / 2, inimigo.posY * TILE_SIZE + TILE_SIZE / 2 };
-
-        // Soldados
-        for (int i = 0; i < num_soldados; i++) {
-            if (!soldados[i].ativo) continue;
-            float dist = Vector2Distance(soldados[i].posicao, inimigo_pos);
-            if (!inimigo.morto && dist <= soldados[i].alcance) {
-                if (agora - soldados[i].tempoUltimoTiro >= soldados[i].cooldown) {
-                    inimigo.vida -= soldados[i].dano;
-                    if (inimigo.vida <= 0 && !inimigo.morto){
-                        moedas += 3;
-
-                        inimigo.morto = true; 
-                    }
-                    soldados[i].tempoUltimoTiro = agora;
-                    soldados[i].tempoFimTiro = agora + 0.1;
-                    printf("Soldado %d atirou! Vida inimigo: %d\n", i, inimigo.vida);
-                }
-                if (agora <= soldados[i].tempoFimTiro) {
-                    DrawLineV(soldados[i].posicao, inimigo_pos, RED);
-                }
-            }
-        }
-
-        // Arqueiros
-        for (int i = 0; i < num_arqueiros; i++) {
-            if (!arqueiros[i].ativo) continue;
-            float dist = Vector2Distance(arqueiros[i].posicao, inimigo_pos);
-            if (!inimigo.morto && dist <= soldados[i].alcance) {
-                if (agora - arqueiros[i].tempoUltimoTiro >= arqueiros[i].cooldown) {
-                    inimigo.vida -= arqueiros[i].dano;
-                    if (inimigo.vida <= 0 && !inimigo.morto){
-                        moedas += 3;
-
-                        inimigo.morto = true; 
-                    }
-                    arqueiros[i].tempoUltimoTiro = agora;
-                    arqueiros[i].tempoFimTiro = agora + 0.1;
-                    printf("Arqueiro %d atirou! Vida inimigo: %d\n", i, inimigo.vida);
-                }
-                if (agora <= arqueiros[i].tempoFimTiro) {
-                    DrawLineV(arqueiros[i].posicao, inimigo_pos, GREEN);
-                }
-            }
-        }
-
-        // Magos
-        for (int i = 0; i < num_magos; i++) {
-            if (!magos[i].ativo) continue;
-            float dist = Vector2Distance(magos[i].posicao, inimigo_pos);
-            if (!inimigo.morto && dist <= soldados[i].alcance) {
-                if (agora - magos[i].tempoUltimoTiro >= magos[i].cooldown) {
-                    inimigo.vida -= magos[i].dano;
-                    if (inimigo.vida <= 0 && !inimigo.morto){
-                        moedas += 3;
-
-                        inimigo.morto = true; 
-                    }
-                    magos[i].tempoUltimoTiro = agora;
-                    magos[i].tempoFimTiro = agora + 0.1;
-                    printf("Mago %d atirou! Vida inimigo: %d\n", i, inimigo.vida);
-                }
-                if (agora <= magos[i].tempoFimTiro) {
-                    DrawLineV(magos[i].posicao, inimigo_pos, BLUE);
-                }
-            }
-        }
-
-
-        if (!inimigo.morto) {
-            Vector2 position = { inimigo.posY * 64.0f, inimigo.posX * 64.0f };
-            Vector2 scale = { 64.0f / inimigoSprite.width, 64.0f / inimigoSprite.height };
-            DrawTexturePro(inimigoSprite, sourceRec, (Rectangle){position.x, position.y, 64.0f, 64.0f},
-                        (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
-        }
-
 
         // Desenhar tile azul/vermelho no cursor
         if (tileX >= 0 && tileX < COLUNAS_MAPA && tileY >= 0 && tileY < LINHAS_MAPA) {
