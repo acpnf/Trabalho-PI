@@ -55,7 +55,7 @@ double moveInterval = 0.9; // Intervalo de movimento em segundos
 bool mostrarDano = false;
 
 // Sistema de vida 
-int vida = 150; 
+int vida = 250; 
 
 // Define o sourceRec para a textura inteira
 Rectangle sourceRec;
@@ -63,7 +63,7 @@ Rectangle sourceRec;
 // variaveis para mostrar a mensagem de dano 
     double tempoMostrarDano = 0;
 
-    int moedas = 100;
+    int moedas = 200;
 
 
 bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arqueiro* arqueiros, int num_arqueiros, Mago* magos, int num_magos) {
@@ -209,6 +209,12 @@ int foo(double currentTime, Inimigo *inimigo, int index, int curr_index)
     return res;
 }
 
+typedef struct {
+    Sound fase1;
+    Sound fase2;
+    bool carregado;
+} GerenciadorSons;
+
 int main(void) {
 
     int fase_atual = 1;
@@ -226,6 +232,12 @@ int main(void) {
 
     InitWindow(largura, altura, "Jogo de Torres");
     SetTargetFPS(60);
+
+    GerenciadorSons sons = {0};
+    sons.fase1 = LoadSound("jogo/som/Loop_The_Old_Tower_Inn.wav");
+    sons.fase2 = LoadSound("jogo/som/Juhani Junkala - Epic Boss Battle [Seamlessly Looping].wav");
+    sons.carregado = true;
+
 
     // Carrega o sprite do inimigo
     inimigoSprite = LoadTexture("personagens/Inimigos/zombie.png");
@@ -301,6 +313,15 @@ int main(void) {
 
     while (!WindowShouldClose()) {
 
+        // Controle de música
+        if (fase_atual == 1) {
+            if (IsSoundPlaying(sons.fase2)) StopSound(sons.fase2);
+            if (!IsSoundPlaying(sons.fase1)) PlaySound(sons.fase1);
+        } else {
+            if (IsSoundPlaying(sons.fase1)) StopSound(sons.fase1);
+            if (!IsSoundPlaying(sons.fase2)) PlaySound(sons.fase2);
+        }
+
         // Obtém o tempo atual
         double currentTime = GetTime();
 
@@ -363,6 +384,15 @@ int main(void) {
         if (fase_atual == 1 && todos_inimigos_mortos(inimigos, sizeof(inimigos)/sizeof(Inimigo))) {
             fase_atual = 2;
             nivel2 = IniciarNivel2();
+
+            // Controle de música
+        if (fase_atual == 2) {
+            if (IsSoundPlaying(sons.fase1)) StopSound(sons.fase1);
+            if (!IsSoundPlaying(sons.fase2)) PlaySound(sons.fase2);
+        } else {
+            if (IsSoundPlaying(sons.fase2)) StopSound(sons.fase2);
+            if (!IsSoundPlaying(sons.fase1)) PlaySound(sons.fase1);
+        }
             
             // Atualiza para a fase 2
             memcpy(mapa, nivel2.mapa, sizeof(nivel2.mapa));
@@ -375,7 +405,7 @@ int main(void) {
             num_magos = 0;
 
             for (int i = 0; i < sizeof(inimigos)/sizeof(Inimigo); i++) {
-                inimigos[i] = CriarInimigo(300, 1.5, inimigoSprite);
+                inimigos[i] = CriarInimigo(100, 1, inimigoSprite);
                 inimigos[i].posX = 9; // Posição inicial da fase 2 (ajuste conforme necessário)
                 inimigos[i].posY = 0;
             }
@@ -410,7 +440,11 @@ int main(void) {
         if (move)
         {
             lastMoveTime = currentTime;
-            curr_index = (curr_index + 1) % (sizeof(inimigos)/sizeof(Inimigo));
+
+            if (curr_index<(sizeof(inimigos)/sizeof(Inimigo))){
+                curr_index = (curr_index + 1);
+            }
+            
             //printf("curr index: %d\n", curr_index);
         }
 
@@ -614,6 +648,8 @@ int main(void) {
     UnloadTexture(imagem_moeda);
     UnloadTexture(caminho_brick);
     UnloadTexture(textura_grama_n);
+    UnloadSound(sons.fase1);
+    UnloadSound(sons.fase2);
 
     CloseWindow();
     return 0;
