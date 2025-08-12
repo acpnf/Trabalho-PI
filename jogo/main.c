@@ -6,6 +6,7 @@
 #include "inimigos.h"
 #include <raymath.h>
 #include "nivel_2.h"
+#include "creditos.h"
 
 
 #define TILE_SIZE 64
@@ -75,9 +76,9 @@ int vida = 150;
 Rectangle sourceRec;
 
 // variaveis para mostrar a mensagem de dano 
-    double tempoMostrarDano = 0;
+double tempoMostrarDano = 0;
 
-    int moedas = 100;
+int moedas = 100;
 // MUDANÇA: O estado inicial do jogo agora é StartScreen
 EstadoJogo estadoJogo = StartScreen;
 
@@ -105,7 +106,7 @@ bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arq
     }
 
     return false;
-}
+} // fecha existe_torre_no_tile
 
 bool todos_inimigos_mortos(Inimigo *inimigos, int total_inimigos) {
     for (int i = 0; i < total_inimigos; i++) {
@@ -114,12 +115,12 @@ bool todos_inimigos_mortos(Inimigo *inimigos, int total_inimigos) {
         }
     }
     return true;
-}
+} // fecha todos_inimigos_mortos
 
 int foo(double currentTime, Inimigo *inimigo, int index, int curr_index)
 {
     int res = 0;
-      // Movimentação do inimigo
+    // Movimentação do inimigo
     if (index <= curr_index && (currentTime - lastMoveTime) >= moveInterval) 
     {
         //printf("index: %d\n", index);
@@ -177,7 +178,6 @@ int foo(double currentTime, Inimigo *inimigo, int index, int curr_index)
                 inimigo->vida -= arqueiros[i].dano;
                 if (inimigo->vida <= 0 && !inimigo->morto){
                     moedas += 3;
-
                     inimigo->morto = true; 
                 }
                 arqueiros[i].tempoUltimoTiro = agora;
@@ -199,7 +199,6 @@ int foo(double currentTime, Inimigo *inimigo, int index, int curr_index)
                 inimigo->vida -= magos[i].dano;
                 if (inimigo->vida <= 0 && !inimigo->morto){
                     moedas += 3;
-
                     inimigo->morto = true; 
                 }
                 magos[i].tempoUltimoTiro = agora;
@@ -221,7 +220,7 @@ int foo(double currentTime, Inimigo *inimigo, int index, int curr_index)
     }
 
     return res;
-}
+} // fecha foo
 
 typedef struct {
     Sound fase1;
@@ -266,13 +265,11 @@ int main(void) {
 
 
     if (inimigoSprite.width == 0) {
-    printf("ERRO: Textura do zumbi não carregada! Caminho: %s\n", 
-            "personagens/Inimigos/zombie.png");
-    return -1;
-}
+        printf("ERRO: Textura do zumbi não carregada! Caminho: %s\n", 
+               "personagens/Inimigos/zombie.png");
+        return -1;
+    } // fecha o if de erro de textura
 
-    // Em foo(), antes do DrawTexturePro:
-    
     // Carregar texturas do mapa
     Texture2D grama_textura = LoadTexture("jogo/imagens/grama.png");
     Texture2D caminho_textura = LoadTexture("jogo/imagens/caminho.png");
@@ -326,7 +323,8 @@ int main(void) {
     int altura_botao = 50;
     int menuX = largura - menuWidth;
 
-    while (!WindowShouldClose()) {
+    int sair = 0;
+    while (!WindowShouldClose() && !sair) {
 
         // Controle de música
         if (fase_atual == 1) {
@@ -367,6 +365,7 @@ int main(void) {
             case Menu:
                 break;
             case Jogando:
+            {
                 PlayMusicStream(musica);
 
                 bool somLigado = true;
@@ -432,22 +431,26 @@ int main(void) {
                         if (IsSoundPlaying(sons.fase2)) StopSound(sons.fase2);
                         if (!IsSoundPlaying(sons.fase1)) PlaySound(sons.fase1);
                     }
-                    
                     // Atualiza para a fase 2
                     memcpy(mapa, nivel2.mapa, sizeof(nivel2.mapa));
                     vida = nivel2.vida_jogador;
                     moedas = nivel2.moedas_iniciais;
-                    
                     // Reinicia torres
                     num_soldados = 0;
                     num_arqueiros = 0;
                     num_magos = 0;
-
                     for (int i = 0; i < sizeof(inimigos)/sizeof(Inimigo); i++) {
                         inimigos[i] = CriarInimigo(100, 1, inimigoSprite);
                         inimigos[i].posX = 9; // Posição inicial da fase 2 (ajuste conforme necessário)
                         inimigos[i].posY = 0;
                     }
+                }
+                // Verifica fim do nível 2 e chama créditos
+                if (fase_atual == 2 && todos_inimigos_mortos(inimigos, sizeof(inimigos)/sizeof(Inimigo))) {
+                    CloseWindow();
+                    StopSound(sons.fase2);
+                    creditos();
+                    goto fim_do_jogo;
                 }
             
                 // --- DESENHO ---
@@ -457,14 +460,13 @@ int main(void) {
                 // Desenhar mapa
                 for (int y = 0; y < LINHAS_MAPA; y++) {
                     for (int x = 0; x < COLUNAS_MAPA; x++) {
-                    Vector2 pos = {x * TILE_SIZE, y * TILE_SIZE};
-                    Texture2D textura;
-                    if (fase_atual == 1)
-                        textura = (mapa[y][x] == 1) ? caminho_textura : grama_textura;
-                    else
-                        textura = (mapa[y][x] == 1) ? caminho_brick : textura_grama_n;
-                
-                        DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
+                        Vector2 pos = {x * TILE_SIZE, y * TILE_SIZE};
+                        Texture2D textura;
+                        if (fase_atual == 1)
+                            textura = (mapa[y][x] == 1) ? caminho_textura : grama_textura;
+                        else
+                            textura = (mapa[y][x] == 1) ? caminho_brick : textura_grama_n;
+                    
                         DrawTextureRec(textura, (Rectangle){0, 0, TILE_SIZE, TILE_SIZE}, pos, WHITE);
                     }
                 }
@@ -635,13 +637,11 @@ int main(void) {
                 DrawText(textoMoedas, xMoedas, yMoedas, fontSizeMoedas, GOLD);
 
                 // Mostrar coracao 
-                Rectangle sourceRec = {0, 0, coracacao_vida.width, coracacao_vida.height};
-                Rectangle destRec = {20, 60, 32, 32};  
+                Rectangle sourceRecHeart = {0, 0, coracacao_vida.width, coracacao_vida.height};
+                Rectangle destRecHeart = {20, 60, 32, 32};  
 
-                DrawTexturePro(coracacao_vida, sourceRec, destRec, origin, 0.0f, WHITE);
-                DrawText(TextFormat("%d HP", vida), 62, 65, 25, RED);
+                DrawTexturePro(coracacao_vida, sourceRecHeart, destRecHeart, origin, 0.0f, WHITE);
 
-                
                 const char* textoVida = TextFormat("%d HP", vida);
                 int xVida = 62;
                 int yVida = 65;
@@ -666,7 +666,8 @@ int main(void) {
                 }
 
                 EndDrawing();
-                break;
+            } // fecha case Jogando bloco
+            break;
             case GameOver:
             {
                 SetWindowSize(800, 600);
@@ -690,16 +691,18 @@ int main(void) {
                     SetWindowSize(largura, altura);
                 }
                 else if (res == 2)
+                {
                     CloseWindow();
+                }
+                break;
             }
-                break;       
             default:
                 break;
-        }
+        } // fecha switch estadoJogo
 
-        
-    }
+    } // fecha while principal
 
+fim_do_jogo:
     // Liberação de recursos
     liberar_torres();
     // MUDANÇA: Libera a memória da textura da tela inicial

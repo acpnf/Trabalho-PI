@@ -2,48 +2,52 @@
 #include "raymath.h"
 #include "creditos.h"
 
-int creditos(void)
+int creditos()
 {
     // Inicialização
     #define MAX_OBSTACULOS 10
-    const int largura_tela = 800;
-    const int altura_tela = 450;
-    InitWindow(largura_tela, altura_tela, "Jogo do Retangulo Saltador");
+    const int largura_tela = 1430;
+    const int altura_tela = 640;
+    InitWindow(largura_tela, altura_tela, "Creditos");
     
     InitAudioDevice();
 
     // Carrega os sons e texturas
-    Sound som_salto = LoadSound("assets/pulo.wav");
-    Sound som_pontuacao = LoadSound("assets/ponto.wav");
-    Sound som_subiu_de_nivel = LoadSound("assets/levelup.wav");
-    Sound som_game_over = LoadSound("assets/gameover.wav");
-    Music musica_nivel1 = LoadMusicStream("assets/musica_level1.wav");
-    Music musica_nivel2 = LoadMusicStream("assets/musica_level2.wav");
-    Texture2D quadro_jogador1 = LoadTexture("assets/MOVIMENTO DIREITA-1.png");
-    Texture2D quadro_jogador2 = LoadTexture("assets/MOVIMENTO DIREITA-2.png");
-    Texture2D quadro_jogador3 = LoadTexture("assets/MOVIMENTO DIREITA-3.png");
+    Sound som_salto = LoadSound("Creditos/assets/pulo.wav");
+    Sound som_pontuacao = LoadSound("Creditos/assets/ponto.wav");
+    Sound som_subiu_de_nivel = LoadSound("Creditos/assets/levelup.wav");
+    Sound som_game_over = LoadSound("Creditos/assets/gameover.wav");
+    Music musica_nivel1 = LoadMusicStream("Creditos/assets/musica_level1.wav");
+    Music musica_nivel2 = LoadMusicStream("Creditos/assets/musica_level2.wav");
+    Texture2D quadro_jogador1 = LoadTexture("Creditos/assets/MOVIMENTO DIREITA-1.png");
+    Texture2D quadro_jogador2 = LoadTexture("Creditos/assets/MOVIMENTO DIREITA-2.png");
+    Texture2D quadro_jogador3 = LoadTexture("Creditos/assets/MOVIMENTO DIREITA-3.png");
     // Texturas de cenário (mantidas)
-    Texture2D background = LoadTexture("assets/background.png");
-    Texture2D background2 = LoadTexture("assets/background2.png");
-    Texture2D background3 = LoadTexture("assets/background3.png"); // nuvem dia
-    Texture2D background4 = LoadTexture("assets/background4.png"); // nuvem dia
-    Texture2D background_noite = LoadTexture("assets/background_noite.png");
-    Texture2D background_noite2 = LoadTexture("assets/background_noite2.png");
-    Texture2D background_noite3 = LoadTexture("assets/background_noite3.png"); // nuvem noite
+    Texture2D background = LoadTexture("Creditos/assets/background.png");
+    Texture2D background2 = LoadTexture("Creditos/assets/background2.png");
+    Texture2D background3 = LoadTexture("Creditos/assets/background3.png"); // nuvem dia
+    Texture2D background4 = LoadTexture("Creditos/assets/background4.png"); // nuvem dia
+    Texture2D background_noite = LoadTexture("Creditos/assets/background_noite.png");
+    Texture2D background_noite2 = LoadTexture("Creditos/assets/background_noite2.png");
+    Texture2D background_noite3 = LoadTexture("Creditos/assets/background_noite3.png"); // nuvem noite
 
     // Texturas específicas dos créditos (NÃO são cenário)
-    Texture2D credito1 = LoadTexture("assets/credito.png");
-    Texture2D credito2 = LoadTexture("assets/credito2.png");
-    Texture2D credito3 = LoadTexture("assets/credito3.png");
-    Texture2D credito4 = LoadTexture("assets/credito4.png");
-    Texture2D credito5 = LoadTexture("assets/credito5.png");
-    Texture2D credito6 = LoadTexture("assets/credito6.png");
-    Texture2D credito7 = LoadTexture("assets/credito7.png");
-    Texture2D credito8 = LoadTexture("assets/credito8.png");
-    Texture2D credito9 = LoadTexture("assets/credito9.png");
-    Texture2D credito10 = LoadTexture("assets/credito10.png");
-    Texture2D credito11 = LoadTexture("assets/credito11.png");
-    Texture2D credito12 = LoadTexture("assets/credito12.png");
+    Texture2D fim_fase1 = LoadTexture("Creditos/assets/fim_fase.png");
+    Texture2D fim_fase2 = LoadTexture("Creditos/assets/fim_fase2.png");
+    Texture2D fim_fase3 = LoadTexture("Creditos/assets/fim_fase3.png");
+    Texture2D credito1 = LoadTexture("Creditos/assets/credito.png");
+    Texture2D credito2 = LoadTexture("Creditos/assets/credito2.png");
+    Texture2D credito3 = LoadTexture("Creditos/assets/credito3.png");
+    Texture2D credito4 = LoadTexture("Creditos/assets/credito4.png");
+    Texture2D credito5 = LoadTexture("Creditos/assets/credito5.png");
+    Texture2D credito6 = LoadTexture("Creditos/assets/credito6.png");
+    Texture2D credito7 = LoadTexture("Creditos/assets/credito7.png");
+    Texture2D credito8 = LoadTexture("Creditos/assets/credito8.png");
+    Texture2D credito9 = LoadTexture("Creditos/assets/credito9.png");
+    Texture2D credito10 = LoadTexture("Creditos/assets/credito10.png");
+    Texture2D credito11 = LoadTexture("Creditos/assets/credito11.png");
+    Texture2D credito12 = LoadTexture("Creditos/assets/credito12.png");
+    Texture2D credito13 = LoadTexture("Creditos/assets/credito13.png");
 
     int chao_y = altura_tela - 50;
 
@@ -60,9 +64,9 @@ int creditos(void)
     bool creditos_aguardando_inicio = false; // true quando créditos terminaram e aguardam tecla para iniciar
         float timer_creditos = 0.0f;
         const float duracao_slide = 2.0f;        // tempo por slide (s)
-        const int num_slides = 12;
+        const int num_slides = 16;
         const float duracao_creditos = duracao_slide * num_slides; // tempo total dos créditos (s)
-        Texture2D creditos_slides[12] = {0};         
+        Texture2D creditos_slides[16] = {0};         
 
     // Configurações do Jogador (Caixa de COLISÃO - não mexer no tamanho)
     Rectangle jogador = { 80, chao_y - 50, 40, 50 };
@@ -89,20 +93,23 @@ int creditos(void)
     int flag_musica = 0;
 
     // inicializa array de slides com as texturas de créditos (APENAS estas)
-        creditos_slides[0] = credito1;
-        creditos_slides[1] = credito2;
-        creditos_slides[2] = credito3;
-        creditos_slides[3] = credito4;
-        creditos_slides[4] = credito5;
-        creditos_slides[5] = credito6;
-        creditos_slides[6] = credito7;
-        creditos_slides[7] = credito8;
-        creditos_slides[8] = credito9;
-        creditos_slides[9] = credito10;
-        creditos_slides[10] = credito11;
-        creditos_slides[11] = credito12;
+        creditos_slides[0] = fim_fase1;
+        creditos_slides[1] = fim_fase2;
+        creditos_slides[2] = fim_fase3;
+        creditos_slides[3] = credito1;
+        creditos_slides[4] = credito2;
+        creditos_slides[5] = credito3;
+        creditos_slides[6] = credito4;
+        creditos_slides[7] = credito5;
+        creditos_slides[8] = credito6;
+        creditos_slides[9] = credito7;
+        creditos_slides[10] = credito8;
+        creditos_slides[11] = credito9;
+        creditos_slides[12] = credito10;
+        creditos_slides[13] = credito11;
+        creditos_slides[14] = credito12;
+        creditos_slides[15] = credito13;
 
-   
     // Nuvens de dia (arrays)
     const int NUM_NUVENS = 6;
     float nuvem_x[NUM_NUVENS];
