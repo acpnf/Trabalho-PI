@@ -14,9 +14,9 @@ Inimigo CriarInimigo(int life, int speed, Texture2D sprite) {
 }
 
 // Função para verificar se a célula já foi visitada
-bool PodeSeMover(int mapa[MAPA_LINHAS][MAPA_COLUNAS], int visitados[MAPA_LINHAS][MAPA_COLUNAS], int dx, int dy) {
+bool PodeSeMover(int mapa[LINHAS_MAPA][COLUNAS_MAPA], int visitados[LINHAS_MAPA][COLUNAS_MAPA], int dx, int dy) {
     // Verifica se a posição está dentro dos limites e não foi visitada
-    if (dx < 0 || dx >= MAPA_LINHAS || dy < 0 || dy >= MAPA_COLUNAS) {
+    if (dx < 0 || dx >= LINHAS_MAPA || dy < 0 || dy >= COLUNAS_MAPA) {
         return false;
     }
     // A célula deve ser livre (1) e não visitada
@@ -24,7 +24,7 @@ bool PodeSeMover(int mapa[MAPA_LINHAS][MAPA_COLUNAS], int visitados[MAPA_LINHAS]
 }
 
 // Função para mover o inimigo, agora com controle de visitação
-void MovimentarInimigo(Inimigo *inimigo, int mapa[MAPA_LINHAS][MAPA_COLUNAS], int visitados[MAPA_LINHAS][MAPA_COLUNAS]) {
+void MovimentarInimigo(Inimigo *inimigo, int mapa[LINHAS_MAPA][COLUNAS_MAPA], int visitados[LINHAS_MAPA][COLUNAS_MAPA]) {
     int dx = inimigo->posX;
     int dy = inimigo->posY;
 

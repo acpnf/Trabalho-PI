@@ -6,6 +6,15 @@ static Texture2D sprite_soldado;
 static Texture2D sprite_arqueiro;
 static Texture2D sprite_mago;
 
+// torres
+Soldado soldados[MAX_TORRES];
+Arqueiro arqueiros[MAX_TORRES];
+Mago magos[MAX_TORRES];
+
+int num_soldados = 0;
+int num_arqueiros = 0;
+int num_magos = 0;
+
 void iniciar_torres(){
     sprite_mago = LoadTexture("jogo/imagens/torre_mago.png");
     sprite_arqueiro = LoadTexture("jogo/imagens/torre_arqueiro.png");

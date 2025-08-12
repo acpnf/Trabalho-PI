@@ -8,6 +8,7 @@
 #define CUSTO_SOLDADO 10
 #define CUSTO_ARQUEIRO 20
 #define CUSTO_MAGO 40
+#define MAX_TORRES 100
 
 // --- Estruturas ---
 typedef struct {
@@ -42,6 +43,14 @@ typedef struct {
     double tempoFimTiro;
     double tempoUltimoTiro;
 } Mago;
+
+// ---Torres---
+extern Soldado soldados[MAX_TORRES];
+extern Arqueiro arqueiros[MAX_TORRES];
+extern Mago magos[MAX_TORRES];
+extern int num_soldados;
+extern int num_arqueiros;
+extern int num_magos;
 
 // --- Funções Públicas ---
 void iniciar_torres(void);

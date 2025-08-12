@@ -3,8 +3,6 @@
 
 #include <raylib.h>
 
-
-
 int RunGameOver(const int largura, const int altura);
 
 void DeInitGameOver(void);
