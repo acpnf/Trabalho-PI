@@ -61,7 +61,7 @@ bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arq
     return false;
 } // fecha existe_torre_no_tile
 
-bool todos_inimigos_mortos(Inimigo *inimigos, int total_inimigos) {
+bool todos_inimigos_mortos(Inimigo *inimigos, int total_inimigos) { // usada para passar pra proxima fase (inimigo)
     for (int i = 0; i < total_inimigos; i++) {
         if (!inimigos[i].morto) {
             return false;
@@ -74,7 +74,7 @@ int foo(double currentTime, Inimigo *inimigo, int index, int curr_index)
 {
     int res = 0;
     // Movimentação do inimigo
-    if (index <= curr_index && (currentTime - lastMoveTime) >= moveInterval) 
+    if (index <= curr_index && (currentTime - lastMoveTime) >= moveInterval)// (inimigo) se movimenta em incremenro
     {
         //printf("index: %d\n", index);
         res = 1;
@@ -655,7 +655,7 @@ int main(void) {
                 {
                     for (int i = 0; i < sizeof(inimigos)/sizeof(Inimigo); i++)
                     {
-                        inimigos[i] = CriarInimigo(100, 1, inimigoSprite);
+                        inimigos[i] = CriarInimigo(100, 1, inimigoSprite); // inicia os inimigos na posicao inicial (inimigo)
                         // Define a posição inicial do inimigo para o primeiro '1' da esquerda
                         inimigos[i].posX = 9;
                         inimigos[i].posY = 0;
