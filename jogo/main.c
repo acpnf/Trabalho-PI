@@ -7,7 +7,8 @@
 #include <raymath.h>
 #include "nivel_2.h"
 #include "creditos.h"
-
+#include "mapa.h"
+#include "config.h"
 
 #define TILE_SIZE 64
 #define LINHAS_MAPA 10
@@ -35,51 +36,9 @@ typedef enum
     GameOver
 } EstadoJogo;
 
-int mapa[LINHAS_MAPA][COLUNAS_MAPA] = {
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-};
-int visitados[LINHAS_MAPA][COLUNAS_MAPA] = {0};  // Inicializa todos como 0 (não visitados)
-
-Soldado soldados[MAX_TORRES];
-Arqueiro arqueiros[MAX_TORRES];
-Mago magos[MAX_TORRES];
-int num_soldados = 0;
-int num_arqueiros = 0;
-int num_magos = 0;
-Texture2D inimigoSprite;
-
-Vector2 posDano;
-
-// Variável para controlar o tempo de movimentação
-double lastMoveTime = 0.0;
-#ifdef DEBUG
-    double moveInterval = 0.2; // Intervalo de movimento em segundos
-#else
-    double moveInterval = 1.5; // Intervalo de movimento em segundos
-#endif
-
-bool mostrarDano = false;
-
-// Sistema de vida 
-int vida = 150; 
 
 // Define o sourceRec para a textura inteira
 Rectangle sourceRec;
-
-// variaveis para mostrar a mensagem de dano 
-double tempoMostrarDano = 0;
-
-int moedas = 100;
-// MUDANÇA: O estado inicial do jogo agora é StartScreen
 EstadoJogo estadoJogo = StartScreen;
 
 
@@ -225,6 +184,10 @@ int foo(double currentTime, Inimigo *inimigo, int index, int curr_index)
 typedef struct {
     Sound fase1;
     Sound fase2;
+    Sound attackMago;
+    Sound attackArqueiro;
+    Sound torre;
+    Sound eliminado;
     bool carregado;
 } GerenciadorSons;
 
@@ -246,12 +209,24 @@ int main(void) {
     const int largura = TILE_SIZE * COLUNAS_MAPA + 150;  // Inclui espaço para menu lateral
     const int altura = TILE_SIZE * LINHAS_MAPA;
 
+    // Variável para controlar o tempo de movimentação
+    double lastMoveTime = 0.0;
+    #ifdef DEBUG
+        double moveInterval = 0.2; // Intervalo de movimento em segundos
+    #else
+        double moveInterval = 1.5; // Intervalo de movimento em segundos
+    #endif
+
     InitWindow(largura, altura, "Jogo de Torres");
     SetTargetFPS(60);
 
     GerenciadorSons sons = {0};
     sons.fase1 = LoadSound("jogo/som/Loop_The_Old_Tower_Inn.wav");
     sons.fase2 = LoadSound("jogo/som/Juhani Junkala - Epic Boss Battle [Seamlessly Looping].wav");
+    sons.attackArqueiro = LoadSound("jogo/som/arqueiroattack.mp3");
+    sons.attackMago = LoadSound("jogo/som/magoattack.mp3");
+    sons.torre = LoadSound("jogo/som/torres.mp3");
+    sons.eliminado = LoadSound("jogo/som/morreu.mp3");
     sons.carregado = true;
 
     
@@ -394,6 +369,7 @@ int main(void) {
                             tileX * TILE_SIZE + TILE_SIZE / 2,
                             tileY * TILE_SIZE + TILE_SIZE / 2
                         };
+                        PlaySound(sons.torre);
 
                         switch (torre_arrastada) {
                             case TORRE_SOLDADO:
@@ -417,7 +393,15 @@ int main(void) {
                         }
                     }
                 }
-
+                if (inimigos[0].morto == true) {
+                    PlaySound(sons.eliminado);
+                }
+                if (arqueiros[0].ativo == true){
+                    PlaySound(sons.attackArqueiro);
+                }
+                if (magos[0].ativo == true){
+                    PlaySound(sons.attackMago);
+                }
                 if (fase_atual == 1 && todos_inimigos_mortos(inimigos, sizeof(inimigos)/sizeof(Inimigo))) {
                     fase_atual = 2;
                     indiceStartImagem = 1;
