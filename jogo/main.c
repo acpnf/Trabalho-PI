@@ -36,12 +36,6 @@ typedef enum
     GameOver
 } EstadoJogo;
 
-
-// Define o sourceRec para a textura inteira
-Rectangle sourceRec;
-EstadoJogo estadoJogo = StartScreen;
-
-
 bool existe_torre_no_tile(int x, int y, Soldado* soldados, int num_soldados, Arqueiro* arqueiros, int num_arqueiros, Mago* magos, int num_magos) {
     int centroX = x * TILE_SIZE + TILE_SIZE / 2;
     int centroY = y * TILE_SIZE + TILE_SIZE / 2;
@@ -192,6 +186,10 @@ typedef struct {
 } GerenciadorSons;
 
 int main(void) {
+    // Define o sourceRec para a textura inteira
+    Rectangle sourceRec;
+    EstadoJogo estadoJogo = StartScreen;
+
 
     int fase_atual = 1;
     Nivel2 nivel2 = {0};
@@ -221,9 +219,6 @@ int main(void) {
     sons.eliminado = LoadSound("jogo/som/morreu.mp3");
     sons.carregado = true;
 
-    
-    // MUDANÇA: Carrega a imagem para a tela inicial com o caminho fornecido.
-    // MUDANÇA: Variável para a textura da tela inicial
     Texture2D startScreenImage[2] = {LoadTexture("jogo/imagens/imagemfase1.png"), LoadTexture("jogo/imagens/imagemfase2.png")};
     int indiceStartImagem = 0;
     // Carrega o sprite do inimigo
@@ -237,7 +232,7 @@ int main(void) {
         return -1;
     } // fecha o if de erro de textura
 
-    // Carregar texturas do mapa
+    // Carrega as texturas do mapa
     Texture2D grama_textura = LoadTexture("jogo/imagens/grama.png");
     Texture2D caminho_textura = LoadTexture("jogo/imagens/caminho.png");
     Texture2D sprite_mago = LoadTexture("jogo/imagens/torre_mago.png");
@@ -340,8 +335,11 @@ int main(void) {
 
                 // Clique no menu lateral
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                    // Caso o clique tenha sido retangulo do menu lateral
                     if (mousePos.x > menuX) {
+                        // calcula qual botao foi clicado (ou se nenhum foi)
                         int buttonIndex = (mousePos.y - 90) / altura_botao;
+                        // Se o botao existir e o jogador tiver moedas o suficiente
                         if (buttonIndex >= 0 && buttonIndex < TORRE_TOTAL && moedas >= custos[buttonIndex]) {
                             arrastando = true;
                             torre_arrastada = buttonIndex;
@@ -351,12 +349,14 @@ int main(void) {
 
                 // Soltar torre
                 if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && arrastando) {
-                    arrastando = false;
+                    arrastando = false; //solta  torre 
+                    // veirfica se a celula do mapa selecioanda é valida
                     if (tileX >= 0 && tileX < COLUNAS_MAPA &&
                         tileY >= 0 && tileY < LINHAS_MAPA &&
                         mousePos.x < menuX &&
                         mapa[tileY][tileX] == 0 &&
                         !existe_torre_no_tile(tileX, tileY, soldados, num_soldados, arqueiros, num_arqueiros, magos, num_magos)) {
+                        // Coloca no cnetro do quadrado da matriz
                         Vector2 pos = {
                             tileX * TILE_SIZE + TILE_SIZE / 2,
                             tileY * TILE_SIZE + TILE_SIZE / 2
@@ -433,13 +433,15 @@ int main(void) {
                 BeginDrawing();
                 ClearBackground(RAYWHITE);
 
-                // Desenhar mapa
+                // Desenho mapa
                 for (int y = 0; y < LINHAS_MAPA; y++) {
                     for (int x = 0; x < COLUNAS_MAPA; x++) {
-                        Vector2 pos = {x * TILE_SIZE, y * TILE_SIZE};
+                        Vector2 pos = {x * TILE_SIZE, y * TILE_SIZE}; //posicao inicial pra desenhar as texturas
                         Texture2D textura;
+                        // Textura da fase 1
                         if (fase_atual == 1)
                             textura = (mapa[y][x] == 1) ? caminho_textura : grama_textura;
+                        // Textura da fase 2 
                         else
                             textura = (mapa[y][x] == 1) ? caminho_brick : textura_grama_n;
                     
@@ -483,6 +485,7 @@ int main(void) {
                 DrawText("DE", menuX + 60, 30, 20, RAYWHITE);
                 DrawText("TORRES", menuX + 30, 50, 20, RAYWHITE);
 
+                // desenha os botoes de cada torre
                 for (int i = 0; i < TORRE_TOTAL; i++) {
                     int yPos = 90 + i * altura_botao;
                     bool podeComprar = (moedas >= custos[i]);
@@ -493,7 +496,7 @@ int main(void) {
                     DrawText(TextFormat("%d moedas", custos[i]), menuX + 20, yPos + 25, 15, cor);
                 }
 
-                // Torre sendo arrastada com o mouse
+                // Torre sendo arrastada com o mouse (define a textura)
                 if (arrastando) {
                     Texture2D sprite = (torre_arrastada == TORRE_SOLDADO) ? sprite_soldado :
                                     (torre_arrastada == TORRE_ARQUEIRO) ? sprite_arqueiro :
@@ -511,7 +514,7 @@ int main(void) {
 
                 // Tela de configurações
                 Vector2 mouse = GetMousePosition();
-                Vector2 origin = {0, 0};
+                Vector2 origin = {0, 0}; //original para desenhar as texturas
 
 
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
