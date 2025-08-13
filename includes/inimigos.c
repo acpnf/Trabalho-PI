@@ -23,7 +23,7 @@ bool PodeSeMover(int mapa[LINHAS_MAPA][COLUNAS_MAPA], int visitados[LINHAS_MAPA]
     return mapa[dx][dy] == 1 && !visitados[dx][dy];
 }
 
-// Função para mover o inimigo, agora com controle de visitação
+
 void MovimentarInimigo(Inimigo *inimigo, int mapa[LINHAS_MAPA][COLUNAS_MAPA], int visitados[LINHAS_MAPA][COLUNAS_MAPA]) {
     int dx = inimigo->posX;
     int dy = inimigo->posY;
